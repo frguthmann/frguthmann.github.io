@@ -6,29 +6,19 @@
     <description>Recent content on Bits &amp; Pixies</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 12 Aug 2019 18:35:23 +0200</lastBuildDate>
+    <lastBuildDate>Tue, 13 Aug 2019 18:00:00 +0200</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Intro</title>
-      <link>/posts/intro/</link>
-      <pubDate>Mon, 12 Aug 2019 18:35:23 +0200</pubDate>
-      
-      <guid>/posts/intro/</guid>
-      <description>Hello, friend!</description>
-    </item>
-    
-    <item>
       <title>About</title>
       <link>/about/</link>
-      <pubDate>Fri, 25 Jan 2019 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 13 Aug 2019 18:00:00 +0200</pubDate>
       
       <guid>/about/</guid>
-      <description>Hi there My name is Radek and I&amp;rsquo;m the author of this theme. I made it to help you present your ideas easier.
-We all know how hard is to start something on the web, especially these days. You need to prepare a bunch of stuff, configure them and when that’s done — create the content.
-This theme is pretty basic and covers all of the essentials. All you have to do is start typing!</description>
+      <description>Hey there! I&amp;rsquo;m François, a computer graphics engineer. This blog is my attempt at sharing some of the knowledge I&amp;rsquo;ve gained thanks to the work of so many talented and amazing people in the graphics community.
+Not everything in here will be up to date and / or to be taken as ground truth. This is me trying to figure out graphics and sharing the results of my experimentations.</description>
     </item>
     
     <item>
