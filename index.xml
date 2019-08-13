@@ -12,22 +12,13 @@
     
     
     <item>
-      <title>About</title>
-      <link>/about/</link>
+      <title>Welcome</title>
+      <link>/</link>
       <pubDate>Tue, 13 Aug 2019 18:00:00 +0200</pubDate>
       
-      <guid>/about/</guid>
-      <description>Hey there! I&amp;rsquo;m François, a computer graphics engineer. This blog is my attempt at sharing some of the knowledge I&amp;rsquo;ve gained thanks to the work of so many talented and amazing people in the graphics community.
+      <guid>/</guid>
+      <description>Welcome to Bits &amp;amp; Pixies! What is this? Well this blog is my attempt at sharing some of the knowledge I&amp;rsquo;ve gained thanks to the work of so many talented and amazing people in the graphics community.
 Not everything in here will be up to date and / or to be taken as ground truth. This is me trying to figure out graphics and sharing the results of my experimentations.</description>
-    </item>
-    
-    <item>
-      <title>Archive</title>
-      <link>/archive/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/archive/</guid>
-      <description></description>
     </item>
     
   </channel>
