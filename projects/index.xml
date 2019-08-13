@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on Bits &amp; Pixies</title>
+    <link>/projects/</link>
+    <description>Recent content in Projects on Bits &amp; Pixies</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 13 Aug 2019 20:00:01 +0200</lastBuildDate>
+    
+	<atom:link href="/projects/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>VirtuaLightJS</title>
+      <link>/projects/virtualightjs/</link>
+      <pubDate>Tue, 13 Aug 2019 20:00:01 +0200</pubDate>
+      
+      <guid>/projects/virtualightjs/</guid>
+      <description>In 2017 I started studying computer graphics at school. We were given a lot of boiler plate code during practical exercises. Sometimes it felt like everything was working through some kind of dark magic. It was especially frustrating when something wouldn&amp;rsquo;t work because there were too many unknowns.
+So during the summer holiday I gave myself the goal to write my own prototype from scratch. I decided to use WebGL because I knew a little JavaScript and figured it had the fastest iteration cycle.</description>
+    </item>
+    
+  </channel>
+</rss>
