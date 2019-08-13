@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Bits &amp; Pixies</title>
+    <title>Welcome to Bits &amp; Pixies! on Bits &amp; Pixies</title>
     <link>/</link>
-    <description>Recent content on Bits &amp; Pixies</description>
+    <description>Recent content in Welcome to Bits &amp; Pixies! on Bits &amp; Pixies</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 13 Aug 2019 18:00:00 +0200</lastBuildDate>
@@ -12,13 +12,23 @@
     
     
     <item>
-      <title>Welcome</title>
-      <link>/</link>
-      <pubDate>Tue, 13 Aug 2019 18:00:00 +0200</pubDate>
+      <title>About</title>
+      <link>/posts/hello/</link>
+      <pubDate>Tue, 13 Aug 2019 18:00:01 +0200</pubDate>
       
-      <guid>/</guid>
-      <description>Welcome to Bits &amp;amp; Pixies! What is this? Well this blog is my attempt at sharing some of the knowledge I&amp;rsquo;ve gained thanks to the work of so many talented and amazing people in the graphics community.
-Not everything in here will be up to date and / or to be taken as ground truth. This is me trying to figure out graphics and sharing the results of my experimentations.</description>
+      <guid>/posts/hello/</guid>
+      <description> &amp;ldquo;Hello, friend?&amp;rdquo; That&amp;rsquo;s lame. Maybe I should give you a name&amp;hellip; But that&amp;rsquo;s a slippery slope. You&amp;rsquo;re only in my head. We have to remember that&amp;hellip; Shit. It&amp;rsquo;s actually happened. I&amp;rsquo;m talking to an imaginary person.
+— Mr. Robot S01E01
+ </description>
+    </item>
+    
+    <item>
+      <title>Archive</title>
+      <link>/archive/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/archive/</guid>
+      <description></description>
     </item>
     
   </channel>

@@ -6,18 +6,20 @@
     <description>Recent content in Posts on Bits &amp; Pixies</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 12 Aug 2019 18:35:23 +0200</lastBuildDate>
+    <lastBuildDate>Tue, 13 Aug 2019 18:00:01 +0200</lastBuildDate>
     
 	<atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Intro</title>
-      <link>/posts/intro/</link>
-      <pubDate>Mon, 12 Aug 2019 18:35:23 +0200</pubDate>
+      <title>About</title>
+      <link>/posts/hello/</link>
+      <pubDate>Tue, 13 Aug 2019 18:00:01 +0200</pubDate>
       
-      <guid>/posts/intro/</guid>
-      <description>Hello, friend!</description>
+      <guid>/posts/hello/</guid>
+      <description> &amp;ldquo;Hello, friend?&amp;rdquo; That&amp;rsquo;s lame. Maybe I should give you a name&amp;hellip; But that&amp;rsquo;s a slippery slope. You&amp;rsquo;re only in my head. We have to remember that&amp;hellip; Shit. It&amp;rsquo;s actually happened. I&amp;rsquo;m talking to an imaginary person.
+— Mr. Robot S01E01
+ </description>
     </item>
     
   </channel>
