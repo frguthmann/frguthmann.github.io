@@ -22,5 +22,16 @@
  </description>
     </item>
     
+    <item>
+      <title>HELLO2</title>
+      <link>/posts/hello2/</link>
+      <pubDate>Sun, 13 May 2018 18:00:01 +0200</pubDate>
+      
+      <guid>/posts/hello2/</guid>
+      <description> &amp;ldquo;Hello, friend?&amp;rdquo; That&amp;rsquo;s lame. Maybe I should give you a name&amp;hellip; But that&amp;rsquo;s a slippery slope. You&amp;rsquo;re only in my head. We have to remember that&amp;hellip; Shit. It&amp;rsquo;s actually happened. I&amp;rsquo;m talking to an imaginary person.
+— Mr. Robot S01E01
+ </description>
+    </item>
+    
   </channel>
 </rss>
