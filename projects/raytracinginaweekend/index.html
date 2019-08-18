@@ -6,9 +6,8 @@
     
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<meta name="description" content="This is my own implementation of Ray Tracing in a weekend by Peter Shirley. It&amp;rsquo;s pretty simple and follows directly the book but the result is always satisfying to watch. Unfortunately, I was finishing the equivalent of my Master&amp;rsquo;s Thesis at the time and didn&amp;rsquo;t get around to implementing the other books.
-Ray Tracing In A Weekend - 1000spp@1920x1080p
-The the two main modifications I made were using stb_image."/>
+<meta name="description" content="This is my own implementation of Ray Tracing in a weekend by Peter Shirley. It&amp;rsquo;s pretty simple and follows directly the book. The the two main modifications I made were using stb_image.h to output .png files and reorganizing the data a little so that the computation could be parallelized using OpenMP. The performance gain was great compared to the small amount of work it required.
+The next step was obviously going to be implementing the other books but unfortunately, I was finishing the equivalent of my master&amp;rsquo;s thesis at the time and didn&amp;rsquo;t get around to do it."/>
 <meta name="keywords" content=""/>
 <meta name="robots" content="noodp"/>
 <link rel="canonical" href="/projects/raytracinginaweekend/" />
@@ -29,16 +28,14 @@ The the two main modifications I made were using stb_image."/>
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Ray Tracing In One Weekend"/>
-<meta name="twitter:description" content="This is my own implementation of Ray Tracing in a weekend by Peter Shirley. It&rsquo;s pretty simple and follows directly the book but the result is always satisfying to watch. Unfortunately, I was finishing the equivalent of my Master&rsquo;s Thesis at the time and didn&rsquo;t get around to implementing the other books.
-Ray Tracing In A Weekend - 1000spp@1920x1080p
-The the two main modifications I made were using stb_image."/>
+<meta name="twitter:description" content="This is my own implementation of Ray Tracing in a weekend by Peter Shirley. It&rsquo;s pretty simple and follows directly the book. The the two main modifications I made were using stb_image.h to output .png files and reorganizing the data a little so that the computation could be parallelized using OpenMP. The performance gain was great compared to the small amount of work it required.
+The next step was obviously going to be implementing the other books but unfortunately, I was finishing the equivalent of my master&rsquo;s thesis at the time and didn&rsquo;t get around to do it."/>
 
 
 
 <meta property="og:title" content="Ray Tracing In One Weekend" />
-<meta property="og:description" content="This is my own implementation of Ray Tracing in a weekend by Peter Shirley. It&rsquo;s pretty simple and follows directly the book but the result is always satisfying to watch. Unfortunately, I was finishing the equivalent of my Master&rsquo;s Thesis at the time and didn&rsquo;t get around to implementing the other books.
-Ray Tracing In A Weekend - 1000spp@1920x1080p
-The the two main modifications I made were using stb_image." />
+<meta property="og:description" content="This is my own implementation of Ray Tracing in a weekend by Peter Shirley. It&rsquo;s pretty simple and follows directly the book. The the two main modifications I made were using stb_image.h to output .png files and reorganizing the data a little so that the computation could be parallelized using OpenMP. The performance gain was great compared to the small amount of work it required.
+The next step was obviously going to be implementing the other books but unfortunately, I was finishing the equivalent of my master&rsquo;s thesis at the time and didn&rsquo;t get around to do it." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="/projects/raytracinginaweekend/" />
 <meta property="article:published_time" content="2018-08-13T20:00:01+02:00" />
@@ -145,25 +142,15 @@ The the two main modifications I made were using stb_image." />
     
 
     <div class="post-content">
-      <p>This is my own implementation of Ray Tracing in a weekend by Peter Shirley. It&rsquo;s pretty simple and follows directly the book but the result is always satisfying to watch. Unfortunately, I was finishing the equivalent of my Master&rsquo;s Thesis at the time and didn&rsquo;t get around to implementing the other books.</p>
+      <p>This is my own implementation of Ray Tracing in a weekend by Peter Shirley. It&rsquo;s pretty simple and follows directly the book. The the two main modifications I made were using stb_image.h to output .png files and reorganizing the data a little so that the computation could be parallelized using OpenMP. The performance gain was great compared to the small amount of work it required.</p>
+
+<p>The next step was obviously going to be implementing the other books but unfortunately, I was finishing the equivalent of my master&rsquo;s thesis at the time and didn&rsquo;t get around to do it.</p>
 
 <p><a href="https://github.com/frguthmann/OneWeekend" target="_blank">
   <figure class="center" >
     <img src="/images/ray_trace_weekend.png"  alt="Ray Tracing In A Weekend"   style="border-radius: 8px;"  />
     
       <figcaption class="center" >Ray Tracing In A Weekend - 1000spp@1920x1080p</figcaption>
-    
-  </figure>
-
-</a></p>
-
-<p>The the two main modifications I made were using stb_image.h to output .png files and reorganising the data a little so that the computation could be parallelized using OpenMP. The performance gain is pretty insane compared to the small amount of work it requires. Plus my school had some nice computers just lying around in the network, ready for me to SSH on them. After a few tiny changes to make my code Linux compatible, I was all set to make the best of it!</p>
-
-<p><a href="/images/ray_tracing_perfo.png" target="_blank">
-  <figure class="center" >
-    <img src="/images/ray_tracing_perfo.png"  alt="OpenMP in action"   style="border-radius: 8px;"  />
-    
-      <figcaption class="center" >OpenMP in action</figcaption>
     
   </figure>
 

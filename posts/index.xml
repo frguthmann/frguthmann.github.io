@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Bits &amp; Pixies</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 13 Aug 2019 18:00:01 +0200</lastBuildDate>
+    <lastBuildDate>Sat, 17 Aug 2019 15:16:15 +0200</lastBuildDate>
     
 	<atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Integrating Dear ImGui in a custom Vulkan renderer</title>
+      <link>/posts/vulkan_imgui/</link>
+      <pubDate>Sat, 17 Aug 2019 15:16:15 +0200</pubDate>
+      
+      <guid>/posts/vulkan_imgui/</guid>
+      <description>In this post we&amp;rsquo;ll be looking at integrating Dear ImGui in a custom Vulkan renderer. The audience I&amp;rsquo;m targeting is beginners still struggling with Vulkan. You should however have a basic Vulkan renderer already up and running. I followed Alexander Overvoorde&amp;rsquo;s amazing tutorial myself and I will use it as an example. The code is entirely available at vulkan-tutorial (go to the bottom of the page) if you&amp;rsquo;re willing to start from there as well.</description>
+    </item>
     
     <item>
       <title>About</title>

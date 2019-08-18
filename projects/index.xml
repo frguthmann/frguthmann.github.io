@@ -17,9 +17,8 @@
       <pubDate>Mon, 13 Aug 2018 20:00:01 +0200</pubDate>
       
       <guid>/projects/raytracinginaweekend/</guid>
-      <description>This is my own implementation of Ray Tracing in a weekend by Peter Shirley. It&amp;rsquo;s pretty simple and follows directly the book but the result is always satisfying to watch. Unfortunately, I was finishing the equivalent of my Master&amp;rsquo;s Thesis at the time and didn&amp;rsquo;t get around to implementing the other books.
-Ray Tracing In A Weekend - 1000spp@1920x1080p
-The the two main modifications I made were using stb_image.</description>
+      <description>This is my own implementation of Ray Tracing in a weekend by Peter Shirley. It&amp;rsquo;s pretty simple and follows directly the book. The the two main modifications I made were using stb_image.h to output .png files and reorganizing the data a little so that the computation could be parallelized using OpenMP. The performance gain was great compared to the small amount of work it required.
+The next step was obviously going to be implementing the other books but unfortunately, I was finishing the equivalent of my master&amp;rsquo;s thesis at the time and didn&amp;rsquo;t get around to do it.</description>
     </item>
     
     <item>

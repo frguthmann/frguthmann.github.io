@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>Integrating Dear ImGui in a custom Vulkan renderer :: Bits &amp; Pixies — My humble blog</title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="description" content="In this post we&amp;rsquo;ll be looking at integrating Dear ImGui in a custom Vulkan renderer. The audience I&amp;rsquo;m targeting is beginners still struggling with Vulkan. You should however have a basic Vulkan renderer already up and running. I followed Alexander Overvoorde&amp;rsquo;s amazing tutorial myself and I will use it as an example. The code is entirely available at vulkan-tutorial (go to the bottom of the page) if you&amp;rsquo;re willing to start from there as well."/>
+<meta name="keywords" content=""/>
+<meta name="robots" content="noodp"/>
+<link rel="canonical" href="/posts/vulkan_imgui/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css">
+
+
+<link rel="stylesheet" href="/style.css">
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
+<link rel="shortcut icon" href="/img/favicon.png">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Integrating Dear ImGui in a custom Vulkan renderer"/>
+<meta name="twitter:description" content="In this post we&rsquo;ll be looking at integrating Dear ImGui in a custom Vulkan renderer. The audience I&rsquo;m targeting is beginners still struggling with Vulkan. You should however have a basic Vulkan renderer already up and running. I followed Alexander Overvoorde&rsquo;s amazing tutorial myself and I will use it as an example. The code is entirely available at vulkan-tutorial (go to the bottom of the page) if you&rsquo;re willing to start from there as well."/>
+
+
+
+<meta property="og:title" content="Integrating Dear ImGui in a custom Vulkan renderer" />
+<meta property="og:description" content="In this post we&rsquo;ll be looking at integrating Dear ImGui in a custom Vulkan renderer. The audience I&rsquo;m targeting is beginners still struggling with Vulkan. You should however have a basic Vulkan renderer already up and running. I followed Alexander Overvoorde&rsquo;s amazing tutorial myself and I will use it as an example. The code is entirely available at vulkan-tutorial (go to the bottom of the page) if you&rsquo;re willing to start from there as well." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/vulkan_imgui/" />
+<meta property="article:published_time" content="2019-08-17T15:16:15+02:00" />
+<meta property="article:modified_time" content="2019-08-17T15:16:15+02:00" /><meta property="og:site_name" content="Bits &amp; Pixies" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">Bits &amp; Pixies</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <span class="header__right" style="margin-left: 0.5rem;">
+      <a href="https://twitter.com/frguthmann" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+</a>
+      <a href="https://github.com/frguthmann" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="currentColor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+</a>
+      <a href="https://www.linkedin.com/in/frguthmann/" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></svg>
+</a>
+    </span>
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/archive">Posts</a></li>
+        
+      
+        
+          <li><a href="/projects">Projects</a></li>
+        
+      
+      
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/archive">Posts</a></li>
+      
+    
+      
+        <li><a href="/projects">Projects</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  <div class="post">
+    <h2 class="post-title"><a href="/posts/vulkan_imgui/">Integrating Dear ImGui in a custom Vulkan renderer</a></h2>
+    <div class="post-meta">
+      
+        <span class="post-date">
+            17-08-2019
+        </span>
+      
+      <span class="post-author">— Written by François Guthmann</span>
+      
+        <span class="post-read-time">— 7 min read</span>
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+
+<p>In this post we&rsquo;ll be looking at integrating Dear ImGui in a custom Vulkan renderer. The audience I&rsquo;m targeting is beginners still struggling with Vulkan. You should however have a basic Vulkan renderer already up and running. I followed <a href="https://twitter.com/Overv" target="_blank">Alexander Overvoorde</a>&rsquo;s amazing tutorial myself and I will use it as an example. The code is entirely available at <a href="https://vulkan-tutorial.com/Multisampling" target="_blank">vulkan-tutorial</a> (go to the bottom of the page) if you&rsquo;re willing to start from there as well. The first chapters explain very carefully how to install the Vulkan SDK and deal with dependencies.</p>
+
+<h2 id="first-contact">First contact</h2>
+
+<p>Ready for a deep dive into Dear ImGui? Good! First, let&rsquo;s go to the <a href="https://github.com/ocornut/imgui/" target="_blank">official repository</a>. In the readme, there are a bunch of information there like how and why it&rsquo;s free open source code, that it&rsquo;s really easy to use and well suited for prototypes and debug features. You should already know that if you&rsquo;re interested in this library. However the next lines are getting interesting:</p>
+
+<blockquote>
+<p>Dear ImGui is self-contained within a few files that you can easily copy and compile into your application/engine:<br />
+- <code>imgui.cpp</code><br />
+- <code>imgui.h</code><br />
+- <code>imgui_demo.cpp</code><br />
+- <code>imgui_draw.cpp</code><br />
+- <code>imgui_widgets.cpp</code><br />
+- <code>imgui_internal.h</code><br />
+- <code>imconfig.h</code> (empty by default, user-editable)<br />
+- <code>imstb_rectpack.h</code><br />
+- <code>imstb_textedit.h</code><br />
+- <code>imstb_truetype.h</code><br />
+No specific build process is required. You can add the .cpp files to your project or <code>#include</code> them from an existing file.</p>
+</blockquote>
+
+<p>
+  <img src="/images/vulkan_imgui/source_files.png"  alt="Hello Friend"  class="right"  style="float: right; border-radius: 8px;"  />
+
+
+What&rsquo;s important to note here? All the .cpp files must be added to the project. It seems to be a common mistakes because I made it and immediately found a Stack Overflow post about it. I was convinced this was a header only library, turns out it&rsquo;s not. So if you&rsquo;re using Visual Studio you should add all the .cpp files listed above to your source files.</p>
+
+<p>You will also need to include the header files. To do so, you can either include them using <code>#include &quot;my_path/my_file.h&quot;</code> or tell VisualStudio where they are and include them using <code>#include &lt;my_file.h&gt;</code>. The menu that allows you to do this is located at: <code>Debug-&gt;Properties-&gt;C/C++-&gt;Additional Include Directories</code></p>
+
+<p>Alright, let&rsquo;s keep on reading. Next is a code sample. Looks pretty easy to use!</p>
+
+<pre><code class="language-c++">ImGui::Text(&quot;Hello, world %d&quot;, 123);  
+if (ImGui::Button(&quot;Save&quot;))  
+{  
+    // do stuff  
+}  
+ImGui::InputText(&quot;string&quot;, buf, IM_ARRAYSIZE(buf));  
+ImGui::SliderFloat(&quot;float&quot;, &amp;f, 0.0f, 1.0f);
+</code></pre>
+
+<p>So what then? Do I just include imgui.h, copy &amp; paste this code sample and it all works through some kind of dark magic? That would be kind of cool but also not really flexible. To understand why this cannot work we need to understand what Dear ImGui is. First of all it&rsquo;s an immediate mode GUI, which means the user is in control of the data not the GUI itself. This makes the GUI a little lower level than retained mode GUIs. However, as the author states, it&rsquo;s important to separate immediate mode GUI from immediate mode rendering.</p>
+
+<blockquote>
+<p>Immediate mode rendering (&hellip;) usually implies hammering your driver/GPU with a bunch of inefficient draw calls and state changes as the GUI functions are called. This is NOT what Dear ImGui does. Dear ImGui outputs vertex buffers and a small list of draw calls batches</p>
+</blockquote>
+
+<p>This sentence is also interesting for another reason. It just gave us the core idea of what we need to do to be able to use Dear ImGui. We need to be able to use the vertex buffers it outputs and process the draw call batches. It definitely explains why we cannot simply copy and paste some code samples. We need to integrate Dear ImGui deeper in our engine to be able to handle its outputs. How do we do that? Well, the next section is all about that.</p>
+
+<blockquote>
+<p>Integrating Dear ImGui within your custom engine is a matter of 1) wiring mouse/keyboard/gamepad inputs 2) uploading one texture to your GPU/render engine 3) providing a render function that can bind textures and render textured triangles. The examples/ folder is populated with applications doing just that.</p>
+</blockquote>
+
+<p>Ok so everything we need to know should be in the example folder, good. You know where to go next. But before we do that, the author leaves us with a little taunt.</p>
+
+<blockquote>
+<p>If you are an experienced programmer at ease with those concepts, it should take you about an hour to integrate Dear ImGui in your custom engine.</p>
+</blockquote>
+
+<p><strong>SPOILER</strong>: It took me more than an hour but I&rsquo;m not an experienced programmer nor am I an expert at Vulkan but that&rsquo;s ok! You&rsquo;re in (hopefully) good hands.</p>
+
+<h2 id="reading-more-than-the-readme">Reading more than the readme</h2>
+
+<p>Let&rsquo;s open the example folder and see what we have. There are tons of things in there but only two folders about Vulkan: <code>example_glfw_vulkan</code> and <code>example_sdl_vulkan</code>. I don&rsquo;t have any experience with SDL and the tutorial I followed used GLFW so we&rsquo;re going to use <code>example_glfw_vulkan</code> for the rest of this post.</p>
+
+<p>In this folder there are several build related files, Visual Studio files, shader code files and finally <code>main.cpp</code>. At the beginning of this file you will find some relevant information on how to setup Dear ImGui.</p>
+
+<pre><code class="language-c++">// dear imgui: standalone example application for Glfw + Vulkan
+// If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
+</code></pre>
+
+<p>In short, <code>examples/README.txt</code> reminds you that you will need to load the fonts to the GPU, pass the inputs to Dear ImGui, and provide it with a way to render triangles. Nothing new so far. The next bit holds more relevant information.</p>
+
+<blockquote>
+<p>This folder contains two things:</p>
+
+<ul>
+<li>Example bindings for popular platforms/graphics API, which you can use as is or adapt for your own use.<br />
+They are the <code>imgui_impl_XXXX</code> files found in the <code>examples/</code> folder.<br /></li>
+<li>Example applications (standalone, ready-to-build) using the aforementioned bindings.<br />
+They are the in the <code>XXXX_example/</code> sub-folders.</li>
+</ul>
+</blockquote>
+
+<p>So basically this means that in the <code>examples</code> folder there are some actual example applications but also some kind of extensions to the core files. Those extensions can be used to integrate Dear ImGui in your engine more easily. We should be interested in the <code>imgui_impl_vulkan</code> files which are located in the examples folder. Reading a bit more, it looks like we&rsquo;re going to need the <code>imgui_impl_glfw</code> files as well.</p>
+
+<blockquote>
+<p>Most the example bindings are split in 2 parts:</p>
+
+<ul>
+<li>The &ldquo;Platform&rdquo; bindings, in charge of: mouse/keyboard/gamepad inputs, cursor shape, timing, windowing.<br />
+Examples: Windows (<code>imgui_impl_win32.cpp</code>), GLFW (<code>imgui_impl_glfw.cpp</code>), SDL2 (<code>imgui_impl_sdl.cpp</code>)<br /></li>
+<li>The &ldquo;Renderer&rdquo; bindings, in charge of: creating the main font texture, rendering imgui draw data.<br />
+Examples: DirectX11 (<code>imgui_impl_dx11.cpp</code>), GL3 (<code>imgui_impl_opengl3.cpp</code>), Vulkan (<code>imgui_impl_vulkan.cpp</code>)<br /></li>
+</ul>
+</blockquote>
+
+<p>Ok so now some of you might be thinking that they want to code everything themselves and that using the <code>imgui_impl_vulkan</code> files is cheating or whatever. Yes, sure. You can rewrite everything from scratch yourself. It&rsquo;s probably the best approach in the end if you want to have control over your entire code base and make it uniform. However, as a first step, taking the easy way is probably for the best.</p>
+
+<blockquote>
+<p>If you use your own engine, you may decide to use some of existing bindings and/or rewrite some using your own API. As a recommendation, if you are new to Dear ImGui, try using the existing binding as-is first, before moving on to rewrite some of the code. Although it is tempting to rewrite both of the <code>imgui_impl_xxxx</code> files to fit under your coding style, consider that it is not necessary! In fact, if you are new to Dear ImGui, rewriting them will almost always be harder.</p>
+</blockquote>
+
+<p>And I think that&rsquo;s it for <code>examples/README.txt</code>. On to the next file, <code>imgui.cpp</code>. That one has a massive amount of information. In fact, the whole documentation of Dear ImGui is in there. I&rsquo;m not going to take you through it step by step because there is too much to cover. It is especially interesting if you want to re-write the <code>imgui_impl_xxxx</code> files but we&rsquo;re doing that right now.</p>
+
+<p>Ok back to where we came from, the <code>main.cpp</code> file from the <code>example_glfw_vulkan</code> folder. Now that we&rsquo;ve briefly read the documentation we&rsquo;re ready to understand what comes next.</p>
+
+<pre><code class="language-c++">// Important note to the reader who wish to integrate imgui_impl_vulkan.cpp/.h in their own engine/app.
+// - Common ImGui_ImplVulkan_XXX functions and structures are used to interface with imgui_impl_vulkan.cpp/.h.
+//   You will use those if you want to use this rendering back-end in your engine/app.
+// - Helper ImGui_ImplVulkanH_XXX functions and structures are only used by this example (main.cpp) and by 
+//   the back-end itself (imgui_impl_vulkan.cpp), but should PROBABLY NOT be used by your own engine/app code.
+// Read comments in imgui_impl_vulkan.h.
+</code></pre>
+
+<p>This is a very important piece of information. We&rsquo;re being told that we should be mainly using the <code>ImGui_ImplVulkan_XXX</code> functions and structures and not the <code>ImGui_ImplVulkanH_XXX</code> ones. Why? Because those are Vulkan related helper functions and you should already have almost all of those in your engine.</p>
+
+<p>Now that we know what we can salvage and what we must plug into our own custom engine, we&rsquo;re ready to read the code itself.</p>
+
+<h2 id="studying-the-code">Studying the code</h2>
+
+    </div>
+    
+      <div class="pagination">
+        <div class="pagination__title">
+          <span class="pagination__title-h">Read other posts</span>
+          <hr />
+        </div>
+        <div class="pagination__buttons">
+          
+          
+            <span class="button next">
+              <a href="/posts/hello/">
+                <span class="button__text">About</span>
+                <span class="button__icon">→</span>
+              </a>
+            </span>
+          
+        </div>
+      </div>
+    
+
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "bitsandpixies" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">François Guthmann</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+      <div class="copyright">
+        <span>© 2019 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+        <span>Theme created by <a href="https://twitter.com/panr" target="_blank" rel="noopener">panr</a></span>
+      </div>
+    
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>
