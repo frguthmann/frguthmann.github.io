@@ -144,9 +144,9 @@ So during the summer holiday I gave myself the goal to write my own prototype fr
     <div class="post-content">
       <p>In 2017 I started studying computer graphics at school. We were given a lot of boiler plate code during practical exercises. Sometimes it felt like everything was working through some kind of dark magic. It was especially frustrating when something wouldn&rsquo;t work. There were too many unknowns.</p>
 
-<p>So during the summer holiday I gave myself the goal to write my own prototype from scratch. I decided to use WebGL because I knew a little JavaScript and figured it had the fastest iteration cycle. The following demo is the resulting of those 2 months of work.</p>
+<p>So during the summer holiday I gave myself the goal to write my own prototype from scratch. I decided to use WebGL because I knew a little JavaScript and figured it had the fastest iteration cycle. The following demo is the result of those 2 months of work.</p>
 
-<p>It&rsquo;s a very simple WebGL2 renderer that can handle a few models and point lights. Shadow mapping is enabled for a single directional light and filtered using a basic Percentage-Closer kernel. The shading model is physically based and can handle basic PBR materials (base color, metallic, roughness, normal, ambient occlusion). I also used datGUI to let the user move every object and light around.</p>
+<p>It&rsquo;s a very simple WebGL2 renderer that can handle a few models and point lights. Shadow mapping is enabled for a single directional light and filtered using a basic Percentage-Closer kernel. The shading model is physically based and can handle basic PBR materials (base color, metallic, roughness, normal, ambient occlusion). I used a Uniform Buffer Object to handle lights and integrated datGUI to let the user move every object and light around.</p>
 
 <p>The biggest challenge of this project was to integrate Image Based Lighting. I&rsquo;m using an HDR environment map that I prefilter on the GPU at runtime to generate the irradiance map and the different roughness-prefiltered mips. The BRDF lookup table is also generated in the same way. Big shoutout to <a href="https://www.learnopengl.com">learnopengl.com</a> for the amazing tutorial on how to do all this.</p>
 

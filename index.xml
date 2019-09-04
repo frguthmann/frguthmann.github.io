@@ -21,35 +21,13 @@
     </item>
     
     <item>
-      <title>About</title>
-      <link>/posts/hello/</link>
-      <pubDate>Tue, 13 Aug 2019 18:00:01 +0200</pubDate>
-      
-      <guid>/posts/hello/</guid>
-      <description> &amp;ldquo;Hello, friend?&amp;rdquo; That&amp;rsquo;s lame. Maybe I should give you a name&amp;hellip; But that&amp;rsquo;s a slippery slope. You&amp;rsquo;re only in my head. We have to remember that&amp;hellip; Shit. It&amp;rsquo;s actually happened. I&amp;rsquo;m talking to an imaginary person.
-— Mr. Robot S01E01
- </description>
-    </item>
-    
-    <item>
       <title>Ray Tracing In One Weekend</title>
       <link>/projects/raytracinginaweekend/</link>
       <pubDate>Mon, 13 Aug 2018 20:00:01 +0200</pubDate>
       
       <guid>/projects/raytracinginaweekend/</guid>
-      <description>This is my own implementation of Ray Tracing in a weekend by Peter Shirley. It&amp;rsquo;s pretty simple and follows directly the book. The the two main modifications I made were using stb_image.h to output .png files and reorganizing the data a little so that the computation could be parallelized using OpenMP. The performance gain was great compared to the small amount of work it required.
-The next step was obviously going to be implementing the other books but unfortunately, I was finishing the equivalent of my master&amp;rsquo;s thesis at the time and didn&amp;rsquo;t get around to do it.</description>
-    </item>
-    
-    <item>
-      <title>HELLO2</title>
-      <link>/posts/hello2/</link>
-      <pubDate>Sun, 13 May 2018 18:00:01 +0200</pubDate>
-      
-      <guid>/posts/hello2/</guid>
-      <description> &amp;ldquo;Hello, friend?&amp;rdquo; That&amp;rsquo;s lame. Maybe I should give you a name&amp;hellip; But that&amp;rsquo;s a slippery slope. You&amp;rsquo;re only in my head. We have to remember that&amp;hellip; Shit. It&amp;rsquo;s actually happened. I&amp;rsquo;m talking to an imaginary person.
-— Mr. Robot S01E01
- </description>
+      <description>This is my own implementation of Ray Tracing in a weekend by Peter Shirley. It&amp;rsquo;s pretty simple and follows the book closely. The the two main modifications I made were using stb_image.h to output .png files and reorganizing the data a little so that the computation could be parallelized using OpenMP. The performance gain was great compared to the small amount of work it required.
+If you&amp;rsquo;re not familiar with the book it involves creating a simple ray tracer from scratch.</description>
     </item>
     
     <item>

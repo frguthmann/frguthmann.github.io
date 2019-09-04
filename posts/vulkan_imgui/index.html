@@ -130,7 +130,7 @@
       
       <span class="post-author">— Written by François Guthmann</span>
       
-        <span class="post-read-time">— 12 min read</span>
+        <span class="post-read-time">— 20 min read</span>
       
     </div>
 
@@ -267,7 +267,7 @@ Examples: DirectX11 (<code>imgui_impl_dx11.cpp</code>), GL3 (<code>imgui_impl_op
 
 <p><a name="GLFW_Window"></a>The first block of code is about setting up a GLFW window, a Vulkan context, a surface and the main framebuffers. This calls some of the functions we skipped earlier. If you have an up and running Vulkan application you have done this somewhere. However, we&rsquo;ll need some of the objects created in this phase like the GLFW <code>window</code> to be exposed by your engine.</p>
 
-<p>The next block is finally about some DearImGui specifics. Here we are creating a context for DearImGui, choosing the inputs we want to give it access to and a theme. These are functions from <code>imgui.h</code> only, there&rsquo;s nothing Vulkan or GLFW related here.</p>
+<p>The next block is finally about some Dear ImGui specifics. Here we are creating a context for Dear ImGui, choosing the inputs we want to give it access to and a theme. These are functions from <code>imgui.h</code> only, there&rsquo;s nothing Vulkan or GLFW related here.</p>
 
 <pre><code class="language-c++">// Setup Dear ImGui context
 IMGUI_CHECKVERSION();
@@ -281,7 +281,7 @@ ImGui::StyleColorsDark();
 //ImGui::StyleColorsClassic();
 </code></pre>
 
-<p>Then comes the tricky part, exposing the relevant parts of your engine to DearImGui. This is mainly done through an interface called <code>ImGui_ImplVulkan_InitInfo</code>.</p>
+<p>Then comes the tricky part, exposing the relevant parts of your engine to Dear ImGui. This is mainly done through an interface called <code>ImGui_ImplVulkan_InitInfo</code>.</p>
 
 <pre><code class="language-c++">    // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForVulkan(window, true);
@@ -300,17 +300,17 @@ ImGui::StyleColorsDark();
     ImGui_ImplVulkan_Init(&amp;init_info, wd-&gt;RenderPass);
 </code></pre>
 
-<p>The first function <code>ImGui_ImplGlfw_InitForVulkan</code> comes from <code>imgui_impl_glfw.cpp</code>. It lets DearImGui interact with GLFW in a non intrusive way. For example, DearImGui will have access to the keyboard and mouse events but will still run the user registered callbacks afterward. This way we don&rsquo;t have to care about handling GUI related inputs but still use the mouse position for things like camera control. However, this functions requires you to provide a <code>GLFW window</code> as explained <a href="#GLFW_Window">earlier</a>.</p>
+<p>The first function <code>ImGui_ImplGlfw_InitForVulkan</code> comes from <code>imgui_impl_glfw.cpp</code>. It lets Dear ImGui interact with GLFW in a non intrusive way. For example, Dear ImGui will have access to the keyboard and mouse events but will still run the user registered callbacks afterward. This way we don&rsquo;t have to care about handling GUI related inputs but still use the mouse position for things like camera control. However, this functions requires you to provide a <code>GLFW window</code> as explained <a href="#GLFW_Window">earlier</a>.</p>
 
-<p>Next up is the <code>ImGui_ImplVulkan_InitInfo</code> structure used by the <code>ImGui_ImplVulkan_Init</code> function. As you can see, they both follow the pattern <code>ImGui_ImplVulkan_XXX</code> and not <code>ImGui_ImplVulkanH_XXX</code>. This means we are encouraged to use them in a first approach. We can already see that this structure is a big bridge between your engine and DearImGui. A lot of Vulkan internals are exposed here and we&rsquo;re going to figure out where they are in our engine.</p>
+<p>Next up is the <code>ImGui_ImplVulkan_InitInfo</code> structure used by the <code>ImGui_ImplVulkan_Init</code> function. As you can see, they both follow the pattern <code>ImGui_ImplVulkan_XXX</code> and not <code>ImGui_ImplVulkanH_XXX</code>. This means we are encouraged to use them in a first approach. We can already see that this structure is a big bridge between your engine and Dear ImGui. A lot of Vulkan internals are exposed here and we&rsquo;re going to figure out where they are in our engine.</p>
 
 <p>The first variable is <code>g_Instance</code>, this is the <code>VkInstance</code> you had to create through the <code>vkCreateInstance</code> call. It&rsquo;s one of the lower level bricks of Vulkan. It holds the extensions required to run your program and the validation layers as well.</p>
 
 <p>Then comes <code>g_PhysicalDevice</code> and <code>g_Device</code>. Those should be pretty self explanatory, they are the <code>VkPhysicalDevice</code> and <code>VkDevice</code> you created in your engine.</p>
 
-<p>The next bit can be a bit confusing. The structure needs a <code>QueueFamily</code> and a <code>Queue</code>. If you&rsquo;re familiar with Vulkan, you know that most operations are done through command buffers that are submitted to a queue. A queue comes from a queue family that allows a limited subset of operations. For example, a family could only allow compute operations or transfer operations. You might be using several queues yourself, so which one is the right one? The most likely is obviously the graphics queue as DearImGui will only be drawing stuff. If you quickly look through the code you&rsquo;ll find confirmation that we&rsquo;re indeed looking for a graphics queue and the related family.</p>
+<p>The next bit can be a bit confusing. The structure needs a <code>QueueFamily</code> and a <code>Queue</code>. If you&rsquo;re familiar with Vulkan, you know that most operations are done through command buffers that are submitted to a queue. A queue comes from a queue family that allows a limited subset of operations. For example, a family could only allow compute operations or transfer operations. You might be using several queues yourself, so which one is the right one? The most likely is obviously the graphics queue as Dear ImGui will only be drawing stuff. If you quickly look through the code you&rsquo;ll find confirmation that we&rsquo;re indeed looking for a graphics queue and the related family.</p>
 
-<p><strong>Note:</strong> I couldn&rsquo;t find any use for the graphics family in DearImGui&rsquo;s code so I tried putting a random number in there and it worked fine.</p>
+<p><strong>Note:</strong> I couldn&rsquo;t find any use for the graphics family in Dear ImGui&rsquo;s code so I tried putting a random number in there and it worked fine.</p>
 
 <pre><code class="language-c++">for (uint32_t i = 0; i &lt; count; i++){
     if (queues[i].queueFlags &amp; VK_QUEUE_GRAPHICS_BIT)
@@ -321,9 +321,9 @@ ImGui::StyleColorsDark();
 }
 </code></pre>
 
-<p>After the queue comes the <code>PipelineCache</code>. I haven&rsquo;t used those but I suppose this is an object that holds previously created pipelines such as a graphics pipeline. If you have one, good for you. If you don&rsquo;t, <code>VK_NULL_HANDLE</code> will work just fine. As far as I can tell, it&rsquo;s only used when creating DearImGui&rsquo;s graphics pipeline.</p>
+<p>After the queue comes the <code>PipelineCache</code>. I haven&rsquo;t used those but I suppose this is an object that holds previously created pipelines such as a graphics pipeline. If you have one, good for you. If you don&rsquo;t, <code>VK_NULL_HANDLE</code> will work just fine. As far as I can tell, it&rsquo;s only used when creating Dear ImGui&rsquo;s graphics pipeline.</p>
 
-<p>The <code>DescriptorPool</code> is another interesting element. Again, you probably already have one. If you&rsquo;re using image samplers or uniform buffers have allocated their descriptors from a pool. However, looking at the code you can see <code>g_DescriptorPool</code> is created using the following pool_sizes.</p>
+<p>The <code>DescriptorPool</code> is another interesting element. Again, you probably already have one. If you&rsquo;re using image samplers or uniform buffers you have allocated their descriptors from a pool. However, looking at the code you can see <code>g_DescriptorPool</code> is created using the following pool_sizes.</p>
 
 <pre><code class="language-c++"> VkDescriptorPoolSize pool_sizes[] =
 {
@@ -341,27 +341,157 @@ ImGui::StyleColorsDark();
 };
 </code></pre>
 
-<p>There are A LOT of things in there. Your pool most likely doesn&rsquo;t have all this. Now there are two solutions, you can either extend your own pool to give it such capacity, or you can create a special one for DearImGui. I&rsquo;m not sure what the implications are but in order to keep everything well separated I decided to create a custom pool for DearImGui using the code provided in <code>main.cpp</code>.</p>
+<p>There are A LOT of things in there. Your pool most likely doesn&rsquo;t have all this. Now there are two solutions, you can either extend your own pool to give it such capacity, or you can create a special one for Dear ImGui. I&rsquo;m not sure what the implications are but in order to keep everything well separated I decided to create a custom pool for Dear ImGui using the code provided at the end of the function <code>SetupVulkan</code> in <code>main.cpp</code>.</p>
+
+<p>The <code>Allocator</code> field can be used to pass a specific memory allocator to the Vulkan functions called by Dear ImGui. You can pass <code>nullptr</code> if you don&rsquo;t have any.</p>
+
+<p><code>MinImageCount</code> and <code>ImageCount</code> are related to the swapchain images. These are not Dear ImGui specific properties and your engine should expose them. <code>ImageCount</code> lets Dear ImGui know how many framebuffers and resources in general it should allocate. <code>MinImageCount</code> is not actually used even though there is a check at init time that its value is greater than 1.</p>
+
+<p><code>CheckVkResultFn</code> is a function that is called to verify that some Vulkan operations went well. For example, all the <code>vkCreate</code> or <code>vkAllocate</code> functions will return a status code which should be <code>VK_SUCCESS</code>. If not, something went wrong. It&rsquo;s good practice to check and Dear ImGui allows you to pass your own error handling logic.</p>
+
+<p>And finally we&rsquo;re initializing our VulkanImpl by calling <code>ImGui_ImplVulkan_Init</code> on the structure we just filled and a render pass. As you can expect, this should be a specific render pass dedicated to Dear ImGui. So where did that <code>wd-&gt;RenderPass</code> come from? Well earlier we skipped a few functions used to initialize Vulkan and it turns out they create this render pass as well. We&rsquo;ll have to create our own.</p>
+
+<p>To create this render pass we first need to create a <code>VkAttachmentDescription</code>. Let&rsquo;s get rid of the boring fields first: we don&rsquo;t need any stencil so we don&rsquo;t care about its operators and the number of samples should probably be 1. Dear ImGui handles drawing correctly already. The format used depends on your swapchain and you should be able to find the relevant <code>VkFormat</code> somewhere in your code.</p>
+
+<p>Ok, so one of the most relevant parts here are <code>loadOp</code> and <code>initialLayout</code>. The first one should be <code>VK_ATTACHMENT_LOAD_OP_LOAD</code> because you want your GUI to be drawn last. This tells Vulkan you don&rsquo;t want to clear the content of the framebuffer but you want to draw over it. Since we&rsquo;re going to draw some stuff, we also want <code>initialLayout</code> to be set to <code>VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</code> for optimal performance. And because this render pass is the last one, we want <code>finalLayout</code> to be set to <code>VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</code>. This will automatically transition our attachment to the right layout for presentation.</p>
+
+<pre><code class="language-c++">VkAttachmentDescription attachment = {};
+attachment.format = swapChain.imagesFormat;
+attachment.samples = VK_SAMPLE_COUNT_1_BIT;
+attachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+attachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+attachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+</code></pre>
+
+<p>Now that we have this <code>VkAttachmentDescription</code> we can create the actual color <code>VkAttachmentReference</code> that our render pass needs. As we described earlier, the layout we&rsquo;re using to draw is <code>VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</code>.</p>
+
+<pre><code class="language-c++">VkAttachmentReference color_attachment = {};
+color_attachment.attachment = 0;
+color_attachment.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+</code></pre>
+
+<p>We can now create a subpass for our render pass using the previously created attachment. It is obviously a graphics subpass.</p>
+
+<pre><code class="language-c++">VkSubpassDescription subpass = {};
+subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+subpass.colorAttachmentCount = 1;
+subpass.pColorAttachments = &amp;color_attachment;
+</code></pre>
+
+<p>Now here comes the tricky part. We have two render passes that we need to synchronize. As far as I can tell, there is no implicit synchronization in Vulkan regarding different render passes. There is a wide range of synchronization primitives to choose from in Vulkan but we can quickly eliminate some of them. Fences are used to synchronize the CPU and the GPU, this is way overkill. Semaphores are used to synchronize events across multiples queues and / or hardware. It is not relevant here either. I&rsquo;m not too familiar with events, it seems they could do the trick but we won&rsquo;t be using them here.</p>
+
+<p>This leaves use with pipeline barriers and external subpass dependencies. As explained in this <a target="blank" href="http://themaister.net/blog/2019/08/14/yet-another-blog-explaining-vulkan-synchronization/">great overview of Vulkan synchronization</a>, they are both pretty similar. A subpass dependency is basically the driver inserting a pipeline barrier for you. I chose this method because it is theoretically more optimized than doing it be hand. Also, I looked at <code>imgui_impl_vulkan.cpp</code> and that&rsquo;s how it&rsquo;s done.</p>
+
+<p>Ok so our <code>srcSubpass</code> is <code>VK_SUBPASS_EXTERNAL</code> as mentioned earlier. We can refer to our first and only <code>subpass</code> in dstSubpass by its index 0. Now we need to state what we&rsquo;re waiting for. Before drawing our GUI, we want our geometry to be already rendered. That means we want the pixels to be already written to the framebuffer. Fortunately, there is a stage called <code>VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</code> for that and we can set our <code>srcStageMask</code> to it. We can also set our <code>dstStageMask</code> to this same value because our GUI will also be drawn to the same target. We&rsquo;re basically waiting for pixels to be written before we can write pixels ourselves.</p>
+
+<p>As for the access masks, I&rsquo;m not sure I understand exactly how they work. If we look at <code>imgui_impl_vulkan.cpp</code>, we can see that <code>srcAccessMask</code> is set to 0 and <code>dstAccessMask</code> is set to <code>VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</code>. I would argue the <code>srcAccessMask</code> should use the <code>VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</code> flag as well. We are waiting for writes to be done with before we can write ourselves. I don&rsquo;t have the answer here, do as you wish. Both work on my computer.</p>
+
+<pre><code class="language-c++">VkSubpassDependency dependency = {};
+dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+dependency.dstSubpass = 0;
+dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+dependency.srcAccessMask = 0;
+dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+</code></pre>
+
+<p>We are now ready to finally create the renderpass by putting together everything we just created. For the sake of completeness, here is the code to finalize the creation of the render pass.</p>
+
+<pre><code class="language-c++">VkRenderPassCreateInfo info = {};
+info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+info.attachmentCount = 1;
+info.pAttachments = &amp;attachment;
+info.subpassCount = 1;
+info.pSubpasses = &amp;subpass;
+info.dependencyCount = 1;
+info.pDependencies = &amp;dependency;
+if (vkCreateRenderPass(device, &amp;info, nullptr, &amp;imGuiRenderPass) != VK_SUCCESS) {
+    throw std::runtime_error(&quot;Could not create Dear ImGui's render pass&quot;);
+}
+</code></pre>
+
+<p>By the way, don&rsquo;t forget to change your penultimate render pass as well. For example, you should set the <code>finalLayout</code> field to <code>VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</code> since it&rsquo;s not presenting anymore.</p>
+
+<p>The next bit as the comment suggests is about uploading fonts to the GPU. It might look complicated at first but it all boils down to a single line specific to Dear ImGui.<br />
+I haven&rsquo;t investigated what it does exactly but there are lots of comments around it pointing in the right direction if you are interested.</p>
+
+<pre><code class="language-c++">ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
+</code></pre>
+
+<p>The code around it handles the command buffer creation and submission. You might already have functions ready for one time usage command buffers (if you have followed <a href="https://vulkan-tutorial.com/Texture_mapping/Images" target="_blank">Alexander Overvoorde&rsquo;s tutorial</a> for example). The code simplifies to 3 lines.</p>
+
+<pre><code class="language-c++">VkCommandBuffer command_buffer = beginSingleTimeCommands();
+ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
+endSingleTimeCommands(command_buffer);      
+</code></pre>
+
+<p>If you don&rsquo;t have anything like that ready, it&rsquo;s ok. You can simply reuse the code provided as is. The variable <code>g_Device</code> is the logical device you created in your engine and <code>g_Queue</code> is the graphics queue you queried as well. You might be wondering what you should be using for the <code>VkCommandBuffer</code> and <code>VkCommandPool</code>. Well, we&rsquo;ll reuse the command buffers and command pools that allow us to submit the Dear ImGui related commands to the GPU. More about this in a moment.</p>
+
+<p>Ok so as far as we can tell, we&rsquo;re done with initialization. You can tell because the main loop is starting. We&rsquo;re starting an infinite loop that will only stop if GLFW tells us the user asked to close the window. Again, you should already have this up and running somewhere.</p>
+
+<pre><code class="language-c++">while (!glfwWindowShouldClose(window)){
+    // Your amazing Vulkan stuff
+}       
+</code></pre>
+
+<p>The beginning of this function is pretty standard, a call to <code>glfwPollEvents</code> to detect user inputs and some code to recreate the swapchain if needed. The only relevant thing here is that upon recreating the swapchain, the minimum amount of image views might have changed. You have to tell Dear ImGui about it by calling <code>ImGui_ImplVulkan_SetMinImageCount</code>.</p>
+
+<pre><code class="language-c++">if (g_SwapChainRebuild)
+{
+    g_SwapChainRebuild = false;
+    ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
+    ImGui_ImplVulkanH_CreateWindow(g_Instance, g_PhysicalDevice, g_Device, &amp;g_MainWindowData, 
+            g_QueueFamily, g_Allocator, g_SwapChainResizeWidth, g_SwapChainResizeHeight, g_MinImageCount);
+    g_MainWindowData.FrameIndex = 0;
+}
+</code></pre>
+
+<p>The next part is where you can actually code your UI. This is not what this article is about so we&rsquo;ll just use the demo window. It also helps getting a higher view of what&rsquo;s going on.</p>
+
+<pre><code class="language-c++">ImGui_ImplVulkan_NewFrame();
+ImGui_ImplGlfw_NewFrame();
+ImGui::NewFrame();
+ImGui::ShowDemoWindow();
+ImGui::Render();
+</code></pre>
+
+<p>First we need to create a new frame, then we describe our UI and finally we ask Dear ImGui to render it. It&rsquo;s pretty straight forward. You might be wondering why creating a new frame takes 3 different calls and that&rsquo;s a legitimately good question. The implementation of <code>ImGui_ImplVulkan_NewFrame</code> is actually empty. I suppose this is just a precaution from the author in case some day there is some Vulkan specific code to add in here. The call to <code>ImGui_ImplGlfw_NewFrame</code> on the other hand makes sense. It is used to handle the user inputs, the screen resize etc. Finally, we need to initialize an actual ImGuiFrame.</p>
+
+<p>Now for the last three lines of our main loop. The first one is specific to the example and is irrelevant.</p>
+
+<pre><code class="language-c++">memcpy(&amp;wd-&gt;ClearValue.color.float32[0], &amp;clear_color, 4 * sizeof(float));
+FrameRender(wd);
+FramePresent(wd);
+</code></pre>
+
+<p>The next two on the other hand are the ones I&rsquo;m interested in. You should actually have some version of those yourself. This is where you acquire an imageview from the swapchain, maybe record command buffers and finally submit them. However, to integrate our new rendering operations we need to modify it slightly.</p>
+
+<p>Dans l&rsquo;idée:</p>
+
+<p>RenderFrame:<br />
+1) Acquire swap chain image =&gt; c&rsquo;est déjà fait<br />
+2) Reset command pool et donc buffer =&gt; OhOH on a oublié d&rsquo;initialiser ça. + On peut maj le code d&rsquo;upload des fonts<br />
+2.5) Aparté sur les command buffers / pools. Pb du reset à chaque frame. Plus efficace que du one time command buffer.<br />
+3) Création de la renderPass =&gt; ohOH on a aussi oublié les framebuffers<br />
+3.5) Apparté sur les framebuffers spécifiques à Dear ImGui. Différents de ceux de la passe d&rsquo;avant si pas du même genre. Ex: pas les mêmes attachments. Pas besoin de depth buffer par exemple ou de resolve buffer parce que pas de MSAA.<br />
+4) Record command buffer =&gt; obligé à chaque frame parce que la fonction ImGui_ImplVulkan_RenderDrawData ne fait qu&rsquo;enregistrer des commandes<br />
+5) Submit</p>
+
+<p>FramePresent:<br />
+1) Juste present en fait. Rien à modifier par rapport à avant.</p>
+
+<p>Don&rsquo;t forget to cleanup after yourself!</p>
+
+<p>&ndash; TUTORIAL<br />
+Rajouter des images<br />
+Relecture globale<br />
+Pas surcharger en <code>TRUCS DE CODE</code><br />
+Découper en plus de sous-parties, ex dans studying the code on peut séparer les différentes phases</p>
 
     </div>
-    
-      <div class="pagination">
-        <div class="pagination__title">
-          <span class="pagination__title-h">Read other posts</span>
-          <hr />
-        </div>
-        <div class="pagination__buttons">
-          
-          
-            <span class="button next">
-              <a href="/posts/hello/">
-                <span class="button__text">About</span>
-                <span class="button__icon">→</span>
-              </a>
-            </span>
-          
-        </div>
-      </div>
     
 
     <div id="disqus_thread"></div>
