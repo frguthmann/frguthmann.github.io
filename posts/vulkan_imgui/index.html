@@ -141,11 +141,11 @@
     <div class="post-content">
       
 
-<p>In this post we&rsquo;ll be looking at integrating Dear ImGui in a custom Vulkan renderer. The audience I&rsquo;m targeting is beginners still struggling with Vulkan. You should however have a basic Vulkan renderer already up and running. I followed <a href="https://twitter.com/Overv" target="_blank">Alexander Overvoorde</a>&rsquo;s amazing tutorial myself and I will use it as an example. The code is entirely available at <a href="https://vulkan-tutorial.com/Multisampling" target="_blank">vulkan-tutorial</a> (go to the bottom of the page) if you&rsquo;re willing to start from there as well. The first chapters explain very carefully how to install the Vulkan SDK and deal with dependencies.</p>
+<p>In this post we&rsquo;ll be looking at integrating Dear ImGui in a custom Vulkan renderer. The audience I&rsquo;m targeting is beginners still struggling with Vulkan. You should however have a basic Vulkan renderer already up and running. I followed <a href="https://twitter.com/Overv" target="_blank" rel="noopener noreferrer">Alexander Overvoorde</a>&rsquo;s amazing tutorial myself and I will use it as an example. The code is entirely available at <a href="https://vulkan-tutorial.com/Multisampling" target="_blank" rel="noopener noreferrer">vulkan-tutorial</a> (go to the bottom of the page) if you&rsquo;re willing to start from there as well. The first chapters explain very carefully how to install the Vulkan SDK and deal with dependencies.</p>
 
 <h2 id="first-contact">First contact</h2>
 
-<p>Ready for a deep dive into Dear ImGui? Good? First, let&rsquo;s go to the <a href="https://github.com/ocornut/imgui/" target="_blank">official repository</a>. In the readme, there is a bunch of information about the reasons why the library was created and what tasks it is suited for. You should already know about the latter if you&rsquo;re interested in this library but the next lines are getting interesting:</p>
+<p>Ready for a deep dive into Dear ImGui? Good? First, let&rsquo;s go to the <a href="https://github.com/ocornut/imgui/" target="_blank" rel="noopener noreferrer">official repository</a>. In the readme, there is a bunch of information about the reasons why the library was created and what tasks it is suited for. You should already know about the latter if you&rsquo;re interested in this library but the next lines are getting interesting:</p>
 
 <blockquote>
 <p>Dear ImGui is self-contained within a few files that you can easily copy and compile into your application/engine:<br />
@@ -444,7 +444,7 @@ I haven&rsquo;t investigated what it does exactly but there are lots of comments
 <pre><code class="language-c++">ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
 </code></pre>
 
-<p>The code around it handles the command buffer creation and submission. You might already have functions ready for one time usage command buffers (if you have followed <a href="https://vulkan-tutorial.com/Texture_mapping/Images" target="_blank">Alexander Overvoorde&rsquo;s tutorial</a> for example). The code simplifies to 3 lines.</p>
+<p>The code around it handles the command buffer creation and submission. You might already have functions ready for one time usage command buffers (if you have followed <a href="https://vulkan-tutorial.com/Texture_mapping/Images" target="_blank" rel="noopener noreferrer">Alexander Overvoorde&rsquo;s tutorial</a> for example). The code simplifies to 3 lines.</p>
 
 <pre><code class="language-c++">VkCommandBuffer command_buffer = beginSingleTimeCommands();
 ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
@@ -697,7 +697,7 @@ vkDestroyDescriptorPool(device, imguiDescriptorPool, nullptr);
 
 <h2 id="final-words">Final words</h2>
 
-<p>Wow, we finally made it through all this. You should now be able to render some geometry and add some GUI over it. Now go make something cool with it and send it to me on Twitter <a href="https://www.twitter.com/frguthmann" target="_blank">@frguthmann</a>. You can also leave a comment below, Disqus has a guest mode. Thank you for reading and do not hesitate to tell me if something is wrong or unclear. Any feedback is welcome :).</p>
+<p>Wow, we finally made it through all this. You should now be able to render some geometry and add some GUI over it. Now go make something cool with it and send it to me on Twitter <a href="https://www.twitter.com/frguthmann" target="_blank" rel="noopener noreferrer">@frguthmann</a>. You can also leave a comment below, Disqus has a guest mode. Thank you for reading and do not hesitate to tell me if something is wrong or unclear. Any feedback is welcome :).</p>
 
     </div>
     
