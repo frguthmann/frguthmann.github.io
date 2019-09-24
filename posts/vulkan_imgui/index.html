@@ -145,7 +145,7 @@
 
 <h2 id="first-contact">First contact</h2>
 
-<p>Ready for a deep dive into Dear ImGui ? Good ! First, let&rsquo;s go to the <a href="https://github.com/ocornut/imgui/" target="_blank">official repository</a>. In the readme, there is a bunch of information about the reasons why the library was created and what tasks it is suited for. You should already know about the latter if you&rsquo;re interested in this library but the next lines are getting interesting:</p>
+<p>Ready for a deep dive into Dear ImGui? Good? First, let&rsquo;s go to the <a href="https://github.com/ocornut/imgui/" target="_blank">official repository</a>. In the readme, there is a bunch of information about the reasons why the library was created and what tasks it is suited for. You should already know about the latter if you&rsquo;re interested in this library but the next lines are getting interesting:</p>
 
 <blockquote>
 <p>Dear ImGui is self-contained within a few files that you can easily copy and compile into your application/engine:<br />
@@ -166,7 +166,7 @@ No specific build process is required. You can add the .cpp files to your projec
   <img src="/images/vulkan_imgui/source_files.png"  alt="source files"  class="right"  style="float: right; border-radius: 8px;"  />
 
 
-What&rsquo;s important to note here ? All the .cpp files must be added to the project. It seems to be a common mistakes to forgot some of those because I made it myself and immediately found a Stack Overflow post about it. I was convinced this was a header only library, turns out it&rsquo;s not. So if you&rsquo;re using Visual Studio you should add all the .cpp files listed above to your source files.</p>
+What&rsquo;s important to note here? All the .cpp files must be added to the project. It seems to be a common mistake to forgot some of those because I made it myself and immediately found a Stack Overflow post about it. I was convinced this was a header only library, turns out it&rsquo;s not. So if you&rsquo;re using Visual Studio you should add all the .cpp files listed above to your source files.</p>
 
 <p>You will also need to include the header files. To do so, you can either include them using <code>#include &quot;my_path/my_file.h&quot;</code> or tell VisualStudio where they are and include them using <code>#include &lt;my_file.h&gt;</code>. The menu that allows you to do this is located at: <code>Debug-&gt;Properties-&gt;C/C++-&gt;Additional Include Directories</code></p>
 
@@ -181,13 +181,13 @@ ImGui::InputText(&quot;string&quot;, buf, IM_ARRAYSIZE(buf));
 ImGui::SliderFloat(&quot;float&quot;, &amp;f, 0.0f, 1.0f);
 </code></pre>
 
-<p>So what then ? Do I just include imgui.h, copy &amp; paste this code sample and it all works through some kind of dark magic ? That would be really cool but also not very flexible. To understand why this cannot work we need to understand what Dear ImGui is. First of all it&rsquo;s an immediate mode GUI, which means the user is in control of the data not the GUI itself. This makes the GUI a little lower level than retained mode GUIs. However, as the author states, it&rsquo;s important to separate immediate mode GUI from immediate mode rendering.</p>
+<p>So what then? Do I just include imgui.h, copy &amp; paste this code sample and it all works through some kind of dark magic? That would be really cool but also not very flexible. To understand why this cannot work we need to understand what Dear ImGui is. First of all it&rsquo;s an immediate mode GUI, which means the user is in control of the data not the GUI itself. This makes the GUI a little lower level than retained mode GUIs. However, as the author states, it&rsquo;s important to separate immediate mode GUI from immediate mode rendering.</p>
 
 <blockquote>
 <p>Immediate mode rendering (&hellip;) usually implies hammering your driver/GPU with a bunch of inefficient draw calls and state changes as the GUI functions are called. This is NOT what Dear ImGui does. Dear ImGui outputs vertex buffers and a small list of draw calls batches</p>
 </blockquote>
 
-<p>This sentence is also interesting for another reason. It just gave us the core idea of what we need to do to be able to use Dear ImGui. We need to be able to use the vertex buffers it outputs and process the draw call batches. It definitely explains why we cannot simply copy and paste some code samples. We need to integrate Dear ImGui deeper in our engine to be able to handle its outputs. How do we do that ? Well, the next section of the readme is all about it.</p>
+<p>This sentence is also interesting for another reason. It just gave us the core idea of what we need to do to be able to use Dear ImGui. We need to be able to use the vertex buffers it outputs and process the draw call batches. It definitely explains why we cannot simply copy and paste some code samples. We need to integrate Dear ImGui deeper in our engine to be able to handle its outputs. How do we do that? Well, the next section of the readme is all about it.</p>
 
 <blockquote>
 <p>Integrating Dear ImGui within your custom engine is a matter of 1) wiring mouse/keyboard/gamepad inputs 2) uploading one texture to your GPU/render engine 3) providing a render function that can bind textures and render textured triangles. The examples/ folder is populated with applications doing just that.</p>
@@ -199,7 +199,7 @@ ImGui::SliderFloat(&quot;float&quot;, &amp;f, 0.0f, 1.0f);
 <p>If you are an experienced programmer at ease with those concepts, it should take you about an hour to integrate Dear ImGui in your custom engine.</p>
 </blockquote>
 
-<p><strong>SPOILER</strong>: It took me more than an hour but I&rsquo;m not an experienced programmer nor am I an expert at Vulkan and that&rsquo;s ok ! We&rsquo;ll get through this at our own pace.</p>
+<p><strong>SPOILER</strong>: It took me more than an hour but I&rsquo;m not an experienced programmer nor am I an expert at Vulkan and that&rsquo;s ok? We&rsquo;ll get through this at our own pace.</p>
 
 <h2 id="reading-more-than-the-readme">Reading more than the readme</h2>
 
@@ -240,7 +240,7 @@ Examples: DirectX11 (<code>imgui_impl_dx11.cpp</code>), GL3 (<code>imgui_impl_op
 <p>Ok so now some of you might be thinking that they want to code everything themselves and that using the <code>imgui_impl_vulkan</code> files is cheating or whatever. Yes, sure. You can rewrite everything from scratch yourself. It&rsquo;s probably the best approach in the end if you want to have control over your entire code base and make it all nice and uniform but as a first step, taking the easy way is probably for the best.</p>
 
 <blockquote>
-<p>If you use your own engine, you may decide to use some of existing bindings and/or rewrite some using your own API. As a recommendation, if you are new to Dear ImGui, try using the existing binding as-is first, before moving on to rewrite some of the code. Although it is tempting to rewrite both of the <code>imgui_impl_xxxx</code> files to fit under your coding style, consider that it is not necessary ! In fact, if you are new to Dear ImGui, rewriting them will almost always be harder.</p>
+<p>If you use your own engine, you may decide to use some of existing bindings and/or rewrite some using your own API. As a recommendation, if you are new to Dear ImGui, try using the existing binding as-is first, before moving on to rewrite some of the code. Although it is tempting to rewrite both of the <code>imgui_impl_xxxx</code> files to fit under your coding style, consider that it is not necessary? In fact, if you are new to Dear ImGui, rewriting them will almost always be harder.</p>
 </blockquote>
 
 <p>And I think that&rsquo;s it for <code>examples/README.txt</code>. On to the next file, <code>imgui.cpp</code>. That one has a massive amount of information. In fact, the whole documentation of Dear ImGui is in there. I&rsquo;m not going to take you through it step by step because there is too much to cover. It is especially interesting if you want to re-write the <code>imgui_impl_xxxx</code> files but we&rsquo;re not doing that right now.</p>
@@ -255,7 +255,7 @@ Examples: DirectX11 (<code>imgui_impl_dx11.cpp</code>), GL3 (<code>imgui_impl_op
 // Read comments in imgui_impl_vulkan.h.
 </code></pre>
 
-<p>This is a very important piece of information. We&rsquo;re being told that we should be mainly using the <code>ImGui_ImplVulkan_XXX</code> functions and structures and not the <code>ImGui_ImplVulkanH_XXX</code> ones. Why ? Because those are Vulkan related helper functions and you should already have most of those in your engine.</p>
+<p>This is a very important piece of information. We&rsquo;re being told that we should be mainly using the <code>ImGui_ImplVulkan_XXX</code> functions and structures and not the <code>ImGui_ImplVulkanH_XXX</code> ones. Why? Because those are Vulkan related helper functions and you should already have most of those in your engine.</p>
 
 <p>Now that we know what we can salvage and what we must plug into our own custom engine, we&rsquo;re ready to read the code itself.</p>
 
@@ -285,21 +285,21 @@ ImGui::StyleColorsDark();
 
 <p>Then comes the tricky part, exposing the relevant parts of your engine to Dear ImGui. This is mainly done through an interface called <code>ImGui_ImplVulkan_InitInfo</code>.</p>
 
-<pre><code class="language-c++">    // Setup Platform/Renderer bindings
-    ImGui_ImplGlfw_InitForVulkan(window, true);
-    ImGui_ImplVulkan_InitInfo init_info = {};
-    init_info.Instance = g_Instance;
-    init_info.PhysicalDevice = g_PhysicalDevice;
-    init_info.Device = g_Device;
-    init_info.QueueFamily = g_QueueFamily;
-    init_info.Queue = g_Queue;
-    init_info.PipelineCache = g_PipelineCache;
-    init_info.DescriptorPool = g_DescriptorPool;
-    init_info.Allocator = g_Allocator;
-    init_info.MinImageCount = g_MinImageCount;
-    init_info.ImageCount = wd-&gt;ImageCount;
-    init_info.CheckVkResultFn = check_vk_result;
-    ImGui_ImplVulkan_Init(&amp;init_info, wd-&gt;RenderPass);
+<pre><code class="language-c++">// Setup Platform/Renderer bindings
+ImGui_ImplGlfw_InitForVulkan(window, true);
+ImGui_ImplVulkan_InitInfo init_info = {};
+init_info.Instance = g_Instance;
+init_info.PhysicalDevice = g_PhysicalDevice;
+init_info.Device = g_Device;
+init_info.QueueFamily = g_QueueFamily;
+init_info.Queue = g_Queue;
+init_info.PipelineCache = g_PipelineCache;
+init_info.DescriptorPool = g_DescriptorPool;
+init_info.Allocator = g_Allocator;
+init_info.MinImageCount = g_MinImageCount;
+init_info.ImageCount = wd-&gt;ImageCount;
+init_info.CheckVkResultFn = check_vk_result;
+ImGui_ImplVulkan_Init(&amp;init_info, wd-&gt;RenderPass);
 </code></pre>
 
 <p>The first function <code>ImGui_ImplGlfw_InitForVulkan</code> comes from <code>imgui_impl_glfw.cpp</code>. It lets Dear ImGui interact with GLFW in a non intrusive way. For example, Dear ImGui will have access to the keyboard and mouse events but will still run the user registered callbacks afterwards. This way we don&rsquo;t have to care about handling GUI related inputs and we can still use the mouse position for things like camera control. To let the library help you with that, you will need to provide it with the <code>GLFW window</code> mentioned <a href="#GLFW_Window">earlier</a>.</p>
@@ -314,7 +314,7 @@ ImGui::StyleColorsDark();
 
 <h4 id="queue">Queue</h4>
 
-<p>The next bit can be a bit confusing. The structure needs a <code>QueueFamily</code> and a <code>Queue</code>. If you&rsquo;re familiar with Vulkan, you know that most operations are done through command buffers that are submitted to a queue. A queue comes from a queue family that allows a limited subset of operations. For example, a family could only allow compute operations or transfer operations. You might be using several queues yourself, so which one is the right one ? The most likely one is the graphics queue as Dear ImGui will only be drawing stuff. If you quickly look through the code you&rsquo;ll find confirmation that we&rsquo;re indeed looking for a graphics queue and the related family.</p>
+<p>The next bit can be a bit confusing. The structure needs a <code>QueueFamily</code> and a <code>Queue</code>. If you&rsquo;re familiar with Vulkan, you know that most operations are done through command buffers that are submitted to a queue. A queue comes from a queue family that allows a limited subset of operations. For example, a family could only allow compute operations or transfer operations. You might be using several queues yourself, so which one is the right one? The most likely one is the graphics queue as Dear ImGui will only be drawing stuff. If you quickly look through the code you&rsquo;ll find confirmation that we&rsquo;re indeed looking for a graphics queue and the related family.</p>
 
 <pre><code class="language-c++">for (uint32_t i = 0; i &lt; count; i++){
     if (queues[i].queueFlags &amp; VK_QUEUE_GRAPHICS_BIT)
@@ -335,7 +335,7 @@ ImGui::StyleColorsDark();
 
 <p>The <code>DescriptorPool</code> is another interesting element. Again, you probably already have one. If you&rsquo;re using image samplers or uniform buffers you have allocated their descriptors from a pool. However, looking at the code you can see that <code>g_DescriptorPool</code> is created using the following pool_sizes.</p>
 
-<pre><code class="language-c++"> VkDescriptorPoolSize pool_sizes[] =
+<pre><code class="language-c++">VkDescriptorPoolSize pool_sizes[] =
 {
     { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
     { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
@@ -367,7 +367,7 @@ ImGui::StyleColorsDark();
 
 <h4 id="final-call">Final call</h4>
 
-<p>And finally we&rsquo;re initializing our <code>VulkanImpl</code> by calling <code>ImGui_ImplVulkan_Init</code> on the structure we just filled and a render pass. As you can expect, this should be a specific render pass dedicated to Dear ImGui. So where did that <code>wd-&gt;RenderPass</code> come from ? Well earlier we skipped a few functions used to initialize Vulkan and it turns out they create this render pass as well. We&rsquo;ll have to create our own.</p>
+<p>And finally we&rsquo;re initializing our <code>VulkanImpl</code> by calling <code>ImGui_ImplVulkan_Init</code> on the structure we just filled and a render pass. As you can expect, this should be a specific render pass dedicated to Dear ImGui. So where did that <code>wd-&gt;RenderPass</code> come from? Well earlier we skipped a few functions used to initialize Vulkan and it turns out they create this render pass as well. We&rsquo;ll have to create our own.</p>
 
 <h4 id="render-pass">Render pass</h4>
 
@@ -403,7 +403,7 @@ subpass.pColorAttachments = &amp;color_attachment;
 
 <p>Now here comes the tricky part. We have two render passes that we need to synchronize. As far as I can tell, there is no implicit synchronization in Vulkan regarding different render passes. There is a wide range of synchronization primitives to choose from in Vulkan but we can quickly eliminate some of them. Fences are used to synchronize the CPU and the GPU, this is way overkill. Semaphores are used to synchronize events across multiples queues and / or hardware. It is not relevant here either. I&rsquo;m not too familiar with events, it seems they could do the trick but we won&rsquo;t be using them here.</p>
 
-<p>This leaves use with pipeline barriers and external subpass dependencies. As explained in this <a target="blank" href="http://themaister.net/blog/2019/08/14/yet-another-blog-explaining-vulkan-synchronization/">great overview of Vulkan synchronization</a>, they are both pretty similar. A subpass dependency is basically the driver inserting a pipeline barrier for you. I chose this method because it is theoretically more optimized than doing it be hand. Also, I looked at <code>imgui_impl_vulkan.cpp</code> and that&rsquo;s how it&rsquo;s done in there, ahum.</p>
+<p>This leaves us with pipeline barriers and external subpass dependencies. As explained in this <a target="blank" href="http://themaister.net/blog/2019/08/14/yet-another-blog-explaining-vulkan-synchronization/">great overview of Vulkan synchronization</a>, they are both pretty similar. A subpass dependency is basically the driver inserting a pipeline barrier for you. I chose this method because it is theoretically more optimized than doing it by hand. Also, I looked at <code>imgui_impl_vulkan.cpp</code> and that&rsquo;s how it&rsquo;s done in there, ahum.</p>
 
 <p>Ok so our <code>srcSubpass</code> must be <code>VK_SUBPASS_EXTERNAL</code> to create a dependency outside the current render pass. We can refer to our first and only subpass in <code>dstSubpass</code> by its index 0. Now we need to state what we&rsquo;re waiting for. Before drawing our GUI, we want our geometry to be already rendered. That means we want the pixels to be already written to the framebuffer. Fortunately, there is a stage called <code>VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT</code> for that and we can set our <code>srcStageMask</code> to it. We can also set our <code>dstStageMask</code> to this same value because our GUI will also be drawn to the same target. We&rsquo;re basically waiting for pixels to be written before we can write pixels ourselves.</p>
 
@@ -513,7 +513,7 @@ ImGui_ImplVulkanH_Frame* fd = &amp;wd-&gt;Frames[wd-&gt;FrameIndex];
 }
 </code></pre>
 
-<p>The next part is getting more interesting. We&rsquo;re resetting a command pool and starting to record commands into a command buffer. So why would we be doing this ? Well, our UI can have multiple states, windows will come and go, buttons will be added and so on. We cannot record our buffers once and for all. We need to record them every time the content changes. The quick and easy solution is to do this every frame. I suppose one could find a way to hash the UI and rebuild command buffers only when necessary but we won&rsquo;t be doing this right now.</p>
+<p>The next part is getting more interesting. We&rsquo;re resetting a command pool and starting to record commands into a command buffer. So why would we be doing this? Well, our UI can have multiple states, windows will come and go, buttons will be added and so on. We cannot record our buffers once and for all. We need to record them every time the content changes. The quick and easy solution is to do this every frame. I suppose one could find a way to hash the UI and rebuild command buffers only when necessary but we won&rsquo;t be doing this right now.</p>
 
 <pre><code class="language-c++">{
     err = vkResetCommandPool(g_Device, fd-&gt;CommandPool, 0);
@@ -540,20 +540,20 @@ for (size_t i = 0; i &lt; imageViews.size(); i++) {
 }
 </code></pre>
 
-<p>Let&rsquo;s look at the command pool first. Our <code>createCommandPool</code> function only takes two arguments, the command pool to create and the flags we want to set. In this case we&rsquo;re using <code>VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</code>. Why do we use this flag ? First because I looked at <code>imgui_impl_vulkan.cpp</code> and saw it was set there. And second because we&rsquo;re calling <code>vkResetCommandPool</code> every frame. Here is what the specification has to say about that.</p>
+<p>Let&rsquo;s look at the command pool first. Our <code>createCommandPool</code> function only takes two arguments, the command pool to create and the flags we want to set. In this case we&rsquo;re using <code>VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</code>. Why do we use this flag? First because I looked at <code>imgui_impl_vulkan.cpp</code> and saw it was set there. And second because we&rsquo;re calling <code>vkResetCommandPool</code> every frame. Here is what the specification has to say about that.</p>
 
 <blockquote>
 <p>VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT allows any command buffer allocated from a pool to be individually reset to the initial state; either by calling vkResetCommandBuffer, or via the implicit reset when calling vkBeginCommandBuffer.</p>
 </blockquote>
 
-<p>So the spec is basically saying that calling <code>vkResetCommandPool</code> is useless, right ? Well, I would assume so. I tried it on my computer and it worked, no complain from the validation layers either. I guess it&rsquo;s up to you to decide how explicit you want your code to be. But this got me thinking, if I don&rsquo;t need to reset the entire pool, then I don&rsquo;t need to have multiple pools either. I tried setting all command buffers from the same pool and removing the call to <code>vkResetCommandPool</code> and everything seems fine, validation layer wise or other. Here is what the new code looks like.</p>
+<p>So the spec is basically saying that calling <code>vkResetCommandPool</code> is useless, right? Well, I would assume so. I tried it on my computer and it worked, no complain from the validation layers either. I guess it&rsquo;s up to you to decide how explicit you want your code to be. But this got me thinking, if I don&rsquo;t need to reset the entire pool, then I don&rsquo;t need to have multiple pools either. I tried setting all command buffers from the same pool and removing the call to <code>vkResetCommandPool</code> and everything seems fine, validation layer wise or other. Here is what the new code looks like.</p>
 
 <pre><code class="language-c++">createCommandPool(&amp;imGuiCommandPool, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
 imGuiCommandBuffers.resize(imageViews.size());
 createCommandBuffers(imGuiCommandBuffers.data(), static_cast&lt;uint32_t&gt;(imGuiCommandBuffers.size()), imGuiCommandPool;
 </code></pre>
 
-<p>On the other hand, not setting the <code>VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</code> flag at all will get you in a lot of trouble !</p>
+<p>On the other hand, not setting the <code>VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</code> flag at all will get you in a lot of trouble?</p>
 
 <blockquote>
 <p>Validation layer returned an error:<br />
@@ -573,6 +573,7 @@ ND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT flag set, commandBuffer must be in the i
     if (vkCreateCommandPool(device, &amp;commandPoolCreateInfo, nullptr, commandPool) != VK_SUCCESS) {
         throw std::runtime_error(&quot;Could not create graphics command pool&quot;);
     }
+}
 </code></pre>
 
 <p>Finally we can create our command buffer. There is nothing specific about this, we just pass the associated command pool and allocate the command buffer. Note that <code>vkAllocateCommandBuffers</code> can allocate several buffers at the same time but only from the same pool. This is why we had to call <code>createCommandBuffers</code> inside the loop in the first version and we can now call it a single time to allocate all command buffers at once. Again, here is the full code if you need it.</p>
@@ -613,9 +614,9 @@ Back to our <code>FrameRender</code> function. The next bit is about starting a 
 
 <h4 id="more-initialization-part-2">More initialization - Part 2</h4>
 
-<p>So what should we use as our framebuffer ? You probably already have an array of framebuffers lying around, one for each frame in flight. So why not use them ? You can try but the validation layers are very likely to yell at you, again. They will first tell you that you&rsquo;re trying to present an image that is in the wrong layout, then that the renderpass is incompatible with the framebuffer because there is an incompatible number of attachments and so on and so forth. In short, it&rsquo;s a bad idea. They&rsquo;re not compatible. We have once again (and I promise, it&rsquo;s the last time) forgotten to initialize something.</p>
+<p>So what should we use as our framebuffer? You probably already have an array of framebuffers lying around, one for each frame in flight. So why not use them? You can try but the validation layers are very likely to yell at you, again. They will first tell you that you&rsquo;re trying to present an image that is in the wrong layout, then that the renderpass is incompatible with the framebuffer because there is an incompatible number of attachments and so on. In short, it&rsquo;s a bad idea. They&rsquo;re not compatible. We have once again (and I promise, it&rsquo;s the last time) forgotten to initialize something.</p>
 
-<p>So what is wrong with our main rendering framebuffers ? Well first they might have too many attachments. Dear ImGui doesn&rsquo;t require a depth buffer for example or if you&rsquo;re using MSAA, Dear ImGui doesn&rsquo;t require a resolve buffer either. What do they need then ? The easiest is to <code>ctrl-f</code> your way through <code>imgui_impl_vulkan.cpp</code> to find a call to <code>vkCreateFramebuffer</code>. Here is what I found.</p>
+<p>So what is wrong with our main rendering framebuffers? Well first they might have too many attachments. Dear ImGui doesn&rsquo;t require a depth buffer for example or if you&rsquo;re using MSAA, Dear ImGui doesn&rsquo;t require a resolve buffer either. What do they need then? The easiest is to <code>ctrl-f</code> your way through <code>imgui_impl_vulkan.cpp</code> to find a call to <code>vkCreateFramebuffer</code>. Here is what I found.</p>
 
 <pre><code class="language-c++">{
     VkImageView attachment[1];
@@ -639,11 +640,11 @@ Back to our <code>FrameRender</code> function. The next bit is about starting a 
 
 <p>As I mentioned, we only need one attachment, the one we will draw to. The renderpass, width and height are exactly the same as the ones we provided <a href="#IMGUI_START_RENDER_PASS">here</a> and  <code>layers</code> is 1 because our imageViews are single images and not arrays.</p>
 
-<p>Now for the actual framebuffer creation, we&rsquo;re again creating as many as we have imageViews. The naming in here is not very explicit to me but what&rsquo;s going on is actually pretty simple. We just need to create a framebuffer for each imageView and reference it in the attachment. That&rsquo;s all that is going on in the for loop. The imageView is <code>wd-&gt;Frames[i]-&gt;BackbufferView</code> in Dear ImGui&rsquo;s code. Again, you already have those somewhere otherwise you&rsquo;re not able to draw or present anything.</p>
+<p>Now for the actual framebuffer creation, we&rsquo;re again creating as many as we have imageViews. The naming in here is not very explicit to me but what&rsquo;s going on is actually pretty simple. We just need to create a framebuffer for each imageView and reference it in the attachment. That&rsquo;s all that is going on in the for loop. The imageView is <code>wd-&gt;Frames[i]-&gt;BackbufferView</code> in Dear ImGui&rsquo;s code. Again, you already have those somewhere otherwise you would not able to draw or present anything.</p>
 
 <h4 id="rendering-the-ui-part-3">Rendering the UI - Part 3</h4>
 
-<p>So, what did we do ? We created our GUI specific framebuffers and we used them to begin a render pass inside the command buffer we&rsquo;re currently recording. The next function call is the one doing all the work. This is Dear ImGui adding all its draw calls to our render pass.</p>
+<p>So, what did we do? We created our GUI specific framebuffers and we used them to begin a render pass inside the command buffer we&rsquo;re currently recording. The next function call is the one doing all the work. This is Dear ImGui adding all its draw calls to our render pass.</p>
 
 <pre><code class="language-c++">// Record Imgui Draw Data and draw funcs into command buffer
 ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), fd-&gt;CommandBuffer);
@@ -673,9 +674,9 @@ if (vkQueueSubmit(graphicsQueue, 1, &amp;submitInfo, inFlightFences[currentFrame
 
 <h4 id="presenting-the-frame">Presenting the frame</h4>
 
-<p>And we&rsquo;re done with <code>FrameRender</code> ! We&rsquo;re left with <code>FramePresent</code> and then we&rsquo;ll be done with the main loop. And you know what ? There is nothing specific to Dear ImGui about it. That&rsquo;s right, you already have this code once again. So yeah, we&rsquo;re done. Go run that program and hope it works ! Did it ? Good ! If not, do not hesitate to leave a comment and we&rsquo;ll see what we can do about it !</p>
+<p>And we&rsquo;re done with <code>FrameRender</code>? We&rsquo;re left with <code>FramePresent</code> and then we&rsquo;ll be done with the main loop. And you know what? There is nothing specific to Dear ImGui about it. That&rsquo;s right, you already have this code once again. So yeah, we&rsquo;re done. Go run that program and hope it works? Did it? Good? If not, do not hesitate to leave a comment and we&rsquo;ll see what we can do about it?</p>
 
-<p>Also, do not forget to take a look at the console, the validation layers will complain that you didn&rsquo;t do the right thing and cleaned after yourself. We created many resources for Dear ImGui and never took time to clean those. Do not forget either that on swapchain recreation, the Dear ImGui renderpass, command pools, command buffers and framebuffers must be destroyed and then recreated !</p>
+<p>Also, do not forget to take a look at the console, the validation layers will complain that you didn&rsquo;t do the right thing and cleaned after yourself. We created many resources for Dear ImGui and never took time to clean those. Do not forget either that on swapchain recreation, the Dear ImGui renderpass, command pools, command buffers and framebuffers must be destroyed and then recreated?</p>
 
 <pre><code class="language-c++">// Resources to destroy on swapchain recreation
 for (auto framebuffer : imGuiFramebuffers) {
