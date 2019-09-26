@@ -145,7 +145,7 @@
 
 <h2 id="first-contact">First contact</h2>
 
-<p>Ready for a deep dive into Dear ImGui? Good? First, let&rsquo;s go to the <a href="https://github.com/ocornut/imgui/" target="_blank" rel="noopener noreferrer">official repository</a>. In the readme, there is a bunch of information about the reasons why the library was created and what tasks it is suited for. You should already know about the latter if you&rsquo;re interested in this library but the next lines are getting interesting:</p>
+<p>Ready for a deep dive into Dear ImGui? Good! First, let&rsquo;s go to the <a href="https://github.com/ocornut/imgui/" target="_blank" rel="noopener noreferrer">official repository</a>. In the readme, there is a bunch of information about the reasons why the library was created and what tasks it is suited for. You should already know about the latter if you&rsquo;re interested in this library but the next lines are getting interesting:</p>
 
 <blockquote>
 <p>Dear ImGui is self-contained within a few files that you can easily copy and compile into your application/engine:<br />
@@ -166,7 +166,7 @@ No specific build process is required. You can add the .cpp files to your projec
   <img src="/images/vulkan_imgui/source_files.png"  alt="source files"  class="right"  style="float: right; border-radius: 8px;"  />
 
 
-What&rsquo;s important to note here? All the .cpp files must be added to the project. It seems to be a common mistake to forgot some of those because I made it myself and immediately found a Stack Overflow post about it. I was convinced this was a header only library, turns out it&rsquo;s not. So if you&rsquo;re using Visual Studio you should add all the .cpp files listed above to your source files.</p>
+What&rsquo;s important to note here? All the .cpp files must be added to the project. It seems to be a common mistake to forget some of those because I made it myself and immediately found a Stack Overflow post about it. I was convinced this was a header only library, turns out it&rsquo;s not. So if you&rsquo;re using Visual Studio you should add all the .cpp files listed above to your source files.</p>
 
 <p>You will also need to include the header files. To do so, you can either include them using <code>#include &quot;my_path/my_file.h&quot;</code> or tell VisualStudio where they are and include them using <code>#include &lt;my_file.h&gt;</code>. The menu that allows you to do this is located at: <code>Debug-&gt;Properties-&gt;C/C++-&gt;Additional Include Directories</code></p>
 
@@ -199,7 +199,7 @@ ImGui::SliderFloat(&quot;float&quot;, &amp;f, 0.0f, 1.0f);
 <p>If you are an experienced programmer at ease with those concepts, it should take you about an hour to integrate Dear ImGui in your custom engine.</p>
 </blockquote>
 
-<p><strong>SPOILER</strong>: It took me more than an hour but I&rsquo;m not an experienced programmer nor am I an expert at Vulkan and that&rsquo;s ok? We&rsquo;ll get through this at our own pace.</p>
+<p><strong>SPOILER</strong>: It took me more than an hour but I&rsquo;m not an experienced programmer nor am I an expert at Vulkan and that&rsquo;s ok! We&rsquo;ll get through this at our own pace.</p>
 
 <h2 id="reading-more-than-the-readme">Reading more than the readme</h2>
 
@@ -240,7 +240,7 @@ Examples: DirectX11 (<code>imgui_impl_dx11.cpp</code>), GL3 (<code>imgui_impl_op
 <p>Ok so now some of you might be thinking that they want to code everything themselves and that using the <code>imgui_impl_vulkan</code> files is cheating or whatever. Yes, sure. You can rewrite everything from scratch yourself. It&rsquo;s probably the best approach in the end if you want to have control over your entire code base and make it all nice and uniform but as a first step, taking the easy way is probably for the best.</p>
 
 <blockquote>
-<p>If you use your own engine, you may decide to use some of existing bindings and/or rewrite some using your own API. As a recommendation, if you are new to Dear ImGui, try using the existing binding as-is first, before moving on to rewrite some of the code. Although it is tempting to rewrite both of the <code>imgui_impl_xxxx</code> files to fit under your coding style, consider that it is not necessary? In fact, if you are new to Dear ImGui, rewriting them will almost always be harder.</p>
+<p>If you use your own engine, you may decide to use some of existing bindings and/or rewrite some using your own API. As a recommendation, if you are new to Dear ImGui, try using the existing binding as-is first, before moving on to rewrite some of the code. Although it is tempting to rewrite both of the <code>imgui_impl_xxxx</code> files to fit under your coding style, consider that it is not necessary! In fact, if you are new to Dear ImGui, rewriting them will almost always be harder.</p>
 </blockquote>
 
 <p>And I think that&rsquo;s it for <code>examples/README.txt</code>. On to the next file, <code>imgui.cpp</code>. That one has a massive amount of information. In fact, the whole documentation of Dear ImGui is in there. I&rsquo;m not going to take you through it step by step because there is too much to cover. It is especially interesting if you want to re-write the <code>imgui_impl_xxxx</code> files but we&rsquo;re not doing that right now.</p>
@@ -553,7 +553,7 @@ imGuiCommandBuffers.resize(imageViews.size());
 createCommandBuffers(imGuiCommandBuffers.data(), static_cast&lt;uint32_t&gt;(imGuiCommandBuffers.size()), imGuiCommandPool;
 </code></pre>
 
-<p>On the other hand, not setting the <code>VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</code> flag at all will get you in a lot of trouble?</p>
+<p>On the other hand, not setting the <code>VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT</code> flag at all will get you in a lot of trouble!</p>
 
 <blockquote>
 <p>Validation layer returned an error:<br />
@@ -674,9 +674,9 @@ if (vkQueueSubmit(graphicsQueue, 1, &amp;submitInfo, inFlightFences[currentFrame
 
 <h4 id="presenting-the-frame">Presenting the frame</h4>
 
-<p>And we&rsquo;re done with <code>FrameRender</code>? We&rsquo;re left with <code>FramePresent</code> and then we&rsquo;ll be done with the main loop. And you know what? There is nothing specific to Dear ImGui about it. That&rsquo;s right, you already have this code once again. So yeah, we&rsquo;re done. Go run that program and hope it works? Did it? Good? If not, do not hesitate to leave a comment and we&rsquo;ll see what we can do about it?</p>
+<p>And we&rsquo;re done with <code>FrameRender</code>! We&rsquo;re left with <code>FramePresent</code> and then we&rsquo;ll be done with the main loop. And you know what? There is nothing specific to Dear ImGui about it. That&rsquo;s right, you already have this code once again. So yeah, we&rsquo;re done. Go run that program and hope it works! Did it? Good! If not, do not hesitate to leave a comment and we&rsquo;ll see what we can do about it!</p>
 
-<p>Also, do not forget to take a look at the console, the validation layers will complain that you didn&rsquo;t do the right thing and cleaned after yourself. We created many resources for Dear ImGui and never took time to clean those. Do not forget either that on swapchain recreation, the Dear ImGui renderpass, command pools, command buffers and framebuffers must be destroyed and then recreated?</p>
+<p>Also, do not forget to take a look at the console, the validation layers will complain that you didn&rsquo;t do the right thing and cleaned after yourself. We created many resources for Dear ImGui and never took time to clean those. Do not forget either that on swapchain recreation, the Dear ImGui renderpass, command pools, command buffers and framebuffers must be destroyed and then recreated!</p>
 
 <pre><code class="language-c++">// Resources to destroy on swapchain recreation
 for (auto framebuffer : imGuiFramebuffers) {
