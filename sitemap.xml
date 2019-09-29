@@ -10,6 +10,7 @@
   <url>
     <loc>/posts/</loc>
     <lastmod>2019-08-17T15:16:15+02:00</lastmod>
+    <priority>0</priority>
   </url>
   
   <url>
@@ -20,6 +21,7 @@
   <url>
     <loc>/projects/</loc>
     <lastmod>2018-08-13T20:00:01+02:00</lastmod>
+    <priority>0</priority>
   </url>
   
   <url>

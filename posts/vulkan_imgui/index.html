@@ -676,6 +676,11 @@ if (vkQueueSubmit(graphicsQueue, 1, &amp;submitInfo, inFlightFences[currentFrame
 
 <p>And we&rsquo;re done with <code>FrameRender</code>! We&rsquo;re left with <code>FramePresent</code> and then we&rsquo;ll be done with the main loop. And you know what? There is nothing specific to Dear ImGui about it. That&rsquo;s right, you already have this code once again. So yeah, we&rsquo;re done. Go run that program and hope it works! Did it? Good! If not, do not hesitate to leave a comment and we&rsquo;ll see what we can do about it!</p>
 
+
+  <img src="/images/vulkan_imgui/result.png"  alt="GUI over rendering"  class="left"  style="border-radius: 8px;"  />
+
+
+
 <p>Also, do not forget to take a look at the console, the validation layers will complain that you didn&rsquo;t do the right thing and cleaned after yourself. We created many resources for Dear ImGui and never took time to clean those. Do not forget either that on swapchain recreation, the Dear ImGui renderpass, command pools, command buffers and framebuffers must be destroyed and then recreated!</p>
 
 <pre><code class="language-c++">// Resources to destroy on swapchain recreation
