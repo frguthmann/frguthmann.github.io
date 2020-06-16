@@ -359,7 +359,7 @@ ImGui_ImplVulkan_Init(&amp;init_info, wd-&gt;RenderPass);
 
 <h4 id="image-count">Image count</h4>
 
-<p><code>MinImageCount</code> and <code>ImageCount</code> are related to the swapchain images. These are not Dear ImGui specific properties and your engine should expose them. <code>ImageCount</code> lets Dear ImGui know how many framebuffers and resources in general it should allocate. <code>MinImageCount</code> is not actually used even though there is a check at init time that its value is greater than 1.</p>
+<p><code>MinImageCount</code> and <code>ImageCount</code> are related to the swapchain images. These are not Dear ImGui specific properties and your engine should expose them. <code>ImageCount</code> lets Dear ImGui know how many framebuffers and resources in general it should allocate. I could not find any actual usage of <code>MinImageCount</code> in Dear ImGui&rsquo;s code even though there is a check at init time that its value is greater than 1.</p>
 
 <h4 id="error-handling">Error handling</h4>
 
@@ -462,7 +462,7 @@ endSingleTimeCommands(command_buffer);
 }       
 </code></pre>
 
-<p>The beginning of this function is pretty standard: a call to <code>glfwPollEvents</code> to detect user inputs and some code to recreate the swapchain if needed. You should already have both of those to handle user inputs and events such as the window being resized. The only thing here relevant to DearImGui is that upon recreating the swapchain, the minimum amount of image views might have changed. You have to tell Dear ImGui about it by calling <code>ImGui_ImplVulkan_SetMinImageCount</code>.</p>
+<p>The beginning of this function is pretty standard: a call to <code>glfwPollEvents</code> to detect user inputs and some code to recreate the swapchain if needed. You should already have both of those to handle user inputs and events such as the window being resized. The only thing here relevant to DearImGui is that upon recreating the swapchain, the minimum amount of image views might have changed. You have to tell Dear ImGui about it by calling <code>ImGui_ImplVulkan_SetMinImageCount</code>. Again, I could not find any use for that value in Dear ImGui&rsquo;s code but I&rsquo;m setting it just to be safe and because it might get used in the future.</p>
 
 <pre><code class="language-c++">if (g_SwapChainRebuild)
 {
