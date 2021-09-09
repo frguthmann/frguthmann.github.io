@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     
-      <title>Integrating Dear ImGui in a custom Vulkan renderer :: Bits &amp; Pixies — My humble blog</title>
+      <title>Integrating Dear ImGui in a custom Vulkan renderer :: The GutHub — My humble blog</title>
     
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -36,7 +36,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="/posts/vulkan_imgui/" />
 <meta property="article:published_time" content="2019-08-17T15:16:15+02:00" />
-<meta property="article:modified_time" content="2019-08-17T15:16:15+02:00" /><meta property="og:site_name" content="Bits &amp; Pixies" />
+<meta property="article:modified_time" content="2019-08-17T15:16:15+02:00" /><meta property="og:site_name" content="The GutHub" />
 
 
 
@@ -54,7 +54,7 @@
   <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
 </svg>
 </span>
-    <span class="logo__text">Bits &amp; Pixies</span>
+    <span class="logo__text">The GutHub</span>
     <span class="logo__cursor"></span>
   
 </a>
@@ -359,7 +359,7 @@ ImGui_ImplVulkan_Init(&amp;init_info, wd-&gt;RenderPass);
 
 <h4 id="image-count">Image count</h4>
 
-<p><code>MinImageCount</code> and <code>ImageCount</code> are related to the swapchain images. These are not Dear ImGui specific properties and your engine should expose them. <code>ImageCount</code> lets Dear ImGui know how many framebuffers and resources in general it should allocate. I could not find any actual usage of <code>MinImageCount</code> in Dear ImGui&rsquo;s code even though there is a check at init time that its value is greater than 1.</p>
+<p><code>MinImageCount</code> and <code>ImageCount</code> are related to the swapchain images. These are not Dear ImGui specific properties and your engine should expose them. <code>ImageCount</code> lets Dear ImGui know how many framebuffers and resources in general it should allocate. <code>MinImageCount</code> is not actually used even though there is a check at init time that its value is greater than 1.</p>
 
 <h4 id="error-handling">Error handling</h4>
 
@@ -462,7 +462,7 @@ endSingleTimeCommands(command_buffer);
 }       
 </code></pre>
 
-<p>The beginning of this function is pretty standard: a call to <code>glfwPollEvents</code> to detect user inputs and some code to recreate the swapchain if needed. You should already have both of those to handle user inputs and events such as the window being resized. The only thing here relevant to DearImGui is that upon recreating the swapchain, the minimum amount of image views might have changed. You have to tell Dear ImGui about it by calling <code>ImGui_ImplVulkan_SetMinImageCount</code>. Again, I could not find any use for that value in Dear ImGui&rsquo;s code but I&rsquo;m setting it just to be safe and because it might get used in the future.</p>
+<p>The beginning of this function is pretty standard: a call to <code>glfwPollEvents</code> to detect user inputs and some code to recreate the swapchain if needed. You should already have both of those to handle user inputs and events such as the window being resized. The only thing here relevant to DearImGui is that upon recreating the swapchain, the minimum amount of image views might have changed. You have to tell Dear ImGui about it by calling <code>ImGui_ImplVulkan_SetMinImageCount</code>.</p>
 
 <pre><code class="language-c++">if (g_SwapChainRebuild)
 {
@@ -706,6 +706,24 @@ vkDestroyDescriptorPool(device, imguiDescriptorPool, nullptr);
 
     </div>
     
+      <div class="pagination">
+        <div class="pagination__title">
+          <span class="pagination__title-h">Read other posts</span>
+          <hr />
+        </div>
+        <div class="pagination__buttons">
+          
+            <span class="button previous">
+              <a href="/posts/compute_shaders/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Exploring ways to optimize compute shaders - Part 1.</span>
+              </a>
+            </span>
+          
+          
+        </div>
+      </div>
+    
 
     <div id="disqus_thread"></div>
 <script type="application/javascript">
@@ -747,7 +765,7 @@ vkDestroyDescriptorPool(device, imguiDescriptorPool, nullptr);
 </a>
 
       <div class="copyright">
-        <span>© 2020 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+        <span>© 2021 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
         <span>Theme created by <a href="https://twitter.com/panr" target="_blank" rel="noopener">panr</a></span>
       </div>
     

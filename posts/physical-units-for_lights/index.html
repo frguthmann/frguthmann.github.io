@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>Physical Units For Lights :: The GutHub — My humble blog</title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="description" content="Already read the article but need a reminder? Go to the TL;DR right now!
+I have been willing to create this blog post for a while now. Every time I need to work with lights and physical units I forget which one is which. Fortunately there are lots of great resources out there already making the connection between the quantities and units or even optic and electromagnetic quantities. The incredible Filament documentation, itself inspired by Moving Frostbite to PBR are great places to look for a different take on this."/>
+<meta name="keywords" content=""/>
+<meta name="robots" content="noodp"/>
+<link rel="canonical" href="/posts/physical-units-for_lights/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css">
+
+
+<link rel="stylesheet" href="/style.css">
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
+<link rel="shortcut icon" href="/img/favicon.png">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Physical Units For Lights"/>
+<meta name="twitter:description" content="Already read the article but need a reminder? Go to the TL;DR right now!
+I have been willing to create this blog post for a while now. Every time I need to work with lights and physical units I forget which one is which. Fortunately there are lots of great resources out there already making the connection between the quantities and units or even optic and electromagnetic quantities. The incredible Filament documentation, itself inspired by Moving Frostbite to PBR are great places to look for a different take on this."/>
+
+
+
+<meta property="og:title" content="Physical Units For Lights" />
+<meta property="og:description" content="Already read the article but need a reminder? Go to the TL;DR right now!
+I have been willing to create this blog post for a while now. Every time I need to work with lights and physical units I forget which one is which. Fortunately there are lots of great resources out there already making the connection between the quantities and units or even optic and electromagnetic quantities. The incredible Filament documentation, itself inspired by Moving Frostbite to PBR are great places to look for a different take on this." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/physical-units-for_lights/" />
+<meta property="article:published_time" content="2021-03-02T21:26:06+01:00" />
+<meta property="article:modified_time" content="2021-03-02T21:26:06+01:00" /><meta property="og:site_name" content="The GutHub" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">The GutHub</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <span class="header__right" style="margin-left: 0.5rem;">
+      <a href="https://twitter.com/frguthmann" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+</a>
+      <a href="https://github.com/frguthmann" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="currentColor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+</a>
+      <a href="https://www.linkedin.com/in/frguthmann/" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></svg>
+</a>
+    </span>
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/archive">Posts</a></li>
+        
+      
+        
+          <li><a href="/projects">Projects</a></li>
+        
+      
+      
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/archive">Posts</a></li>
+      
+    
+      
+        <li><a href="/projects">Projects</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  <div class="post">
+    <h2 class="post-title"><a href="/posts/physical-units-for_lights/">Physical Units For Lights</a></h2>
+    <div class="post-meta">
+      
+        <span class="post-date">
+            02-03-2021
+        </span>
+      
+      <span class="post-author">— Written by François Guthmann</span>
+      
+        <span class="post-read-time">— 9 min read</span>
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+
+<p>Already read the article but need a reminder? <a href="#TL_DR">Go to the TL;DR right now!</a></p>
+
+<p>I have been willing to create this blog post for a while now. Every time I need to work with lights and physical units I forget which one is which. Fortunately there are lots of great resources out there already making the connection between the quantities and units or even optic and electromagnetic quantities. The incredible <a href="https://google.github.io/filament/Filament.html#lighting/units" target="_blank" rel="noopener noreferrer">Filament documentation</a>, itself inspired by <a href="https://seblagarde.files.wordpress.com/2015/07/course_notes_moving_frostbite_to_pbr_v32.pdf" target="_blank" rel="noopener noreferrer">Moving Frostbite to PBR</a> are great places to look for a different take on this.</p>
+
+<p>One of the things that I find sometimes missing out there is an explanation in plain english of what those quantities are. If I can&rsquo;t visualize something or put words on it it&rsquo;s hard for me to grasp. I&rsquo;m hoping to bridge that gap here on top of providing a very concise and efficient reminder.</p>
+
+<h2 id="it-s-all-about-energy">It&rsquo;s all about energy</h2>
+
+<p>There many advantages to using physical units for lights, amongst which are the ability to compare with real life measurements, to ensure consistency across rendering engines and even to easily model real world lamps. In the context of Physically Based Rendering, where <a href="https://0xef.wordpress.com/2020/05/01/physically-based-materials-energy-conservation-and-reciprocity/" target="_blank" rel="noopener noreferrer">Energy Conservation And Reciprocity</a> are key, it is pretty much necessary.</p>
+
+<p>In order to understand what the different units are and how they are related to each other we&rsquo;ll have to start from the bottom of the pyramid and build our way up from there. And if you think about it, light itself is fundamentally energy. Energy can be expressed in <a href="https://en.wikipedia.org/wiki/Joule" target="_blank" rel="noopener noreferrer"><code>joule</code></a>, a unit derived from the <a href="https://en.wikipedia.org/wiki/SI_base_unit" target="_blank" rel="noopener noreferrer">SI System</a>.</p>
+
+<p>Now what we casually call &lsquo;lights&rsquo; in our renderers are really light <em>sources</em>. They are generating light constantly. It means that by one way or another they are emitting energy per unit of time. This is usually called a <code>power</code> in physics. If we want to express our energy in <code>joule (j)</code> per unit of time in <code>seconds</code> we get <code>watts</code>. This is called the <a href="https://en.wikipedia.org/wiki/Radiant_flux" target="_blank" rel="noopener noreferrer"><code>Radiant flux</code> or <code>Radiant power</code></a> in the radiometry terminology.</p>
+
+<p>This is a great start, we have found a way to define the energy emitted by any light per unit of time. This sounds like a solid base for our Pyramid. However, it is more common in the computer graphics community to use <em>photometry</em> language rather than <em>radiometry</em> language. Instead of using the <code>Radiant flux</code> or <code>Radiant power</code>, we&rsquo;ll use the <a href="https://en.wikipedia.org/wiki/Luminous_flux" target="_blank" rel="noopener noreferrer"><code>Luminous flux</code> or <code>Luminous power</code></a>. The difference is that the &lsquo;Luminous&rsquo; power of an electromagnetic radiation is weighted based on the sensitivity of the human eye. It kind of makes sense, a radiator emits a lot of <code>Radiant Power</code> in the infrared wavelength but we can&rsquo;t see that. Measuring of much energy a lightbulb emits with this metric would be useless to determine how bright it is to a human.</p>
+
+<p>The conversion between the true <em>power</em> and the <em>luminous</em> power is defined by the <a href="https://en.wikipedia.org/wiki/Luminous_efficacy" target="_blank" rel="noopener noreferrer"><code>Luminous Efficacy function</code></a>. This functions basically defines how efficiently a lightsource actually lights, ie how much of the energy it emits is actually visible by the human eye. Because we use this function to convert from <code>Radiant Power</code> to <code>Luminous Power</code>, the latter cannot be homogeneous to a power. That&rsquo;s fine, we&rsquo;ll use our own unit, with black body and HOOKERS PUN. Thus was born the <code>lumen (lm)</code>. Unfortunately in the SI system, the lumen is a derived unit and not the main one. I find this weird and confusing but whatever, we&rsquo;ll catch up with the SI system later on.</p>
+
+<p>It&rsquo;s important to understand that the <code>Luminous Power</code> still behaves like a power. Effectively it <em>IS</em> a power, just measured with a crappy sensor. In your head, you can still think about it as a measure of energy per unit of time even if this isn&rsquo;t 100% accurate.</p>
+
+<p>Note that if you buy lightbulbs these days, the intensity of the light is probably advertised in lumen. This makes it a very convenient unit to use when writing the tools artists will use to author light sources. However, if you&rsquo;ve looked at some engine documentations or even the links I provided at the beginning you might have encountered the <code>lux (lx)</code> and <code>candela (cd)</code> units. The <code>lux</code> in particular is often used to describe the sun intensity and IES profiles store <code>candelas</code>.</p>
+
+<h3 id="direction-oriented-design">Direction oriented design</h3>
+
+<p>Let&rsquo;s talk about the <a href="https://en.wikipedia.org/wiki/Candela" target="_blank" rel="noopener noreferrer"><code>candela</code></a> unit first, which is the <code>Luminous Intensity</code> quantity. It is the base unit of all the other Luminous quantities in the SI system. One of its definition is <code>lumen per steradian</code>. This unit measures a power-like quantity in a single infinitesimal direction.</p>
+
+<p>I know the <em>per something</em> terminology can be confusing but it always means the same thing: for an infinitely small <em>something</em>. Let&rsquo;s say we have a punctual lightsource that emits 1 candela for every possible direction. This means no matter what infinitesimal direction you choose, if you measure the Luminous Intensity you get 1 candela. If we want to know how much energy is emitted in the upper hemisphere, we basically want to know how much energy is emitted in half the possible directions, so 0.5 * 4 PI = 2 PI. Well if our lightsource emits 1 candela, so 1 lumen / steradian and we are looking at a solid angle of 2 PI, this means we emit 2 PI lumens in that part of the world.</p>
+
+
+  <img src="/images/physical_units/candela.png"  alt="source files"  class="left"  style="border-radius: 8px;"  />
+
+
+
+<p>It is also important to understand the opposite way of seeing things which can sometimes be counter intuitive. While you can specify how many lumens there are in a finite solid angle, you cannot measure how many lumens there are in an infinitely small direction. For a specific direction, one can only measure an amount of candela.</p>
+
+<p>Before we jump to the next unit we still need to be clear on one last thing. We only spoke about a punctual light source so far, but everything we said is also true for an area light. If we think of a square area light and measure that it emits 1 candela in a specific direction, it means the entire area light contributed. By that I mean that even though we measured a single direction, every single point on the surface contributed to that specific direction. It might seem obvious now, but it will be important later.</p>
+
+<h3 id="space-oriented-design">Space oriented design</h3>
+
+<p>Let&rsquo;s talk about the <code>lux</code> unit now. It is the unit describing the <a href="https://en.wikipedia.org/wiki/Illuminance " target="_blank" rel="noopener noreferrer"><code>Luminous Emittance or Illuminance</code></a> quantity. The lux unit is defined as <code>lumen per square meter</code>. It measures a power-like quantity leaving a single infinitesimal area.</p>
+
+<p>Let&rsquo;s follow the same kind of example as above and chose a square light of size 2m per side and which surface emits 1 lux. This means every single point on the surface of the square emits 1 lux. If we want to know how much energy is emitted by half the surface of the square, we need to multiply our Luminous Emittance by that area. Our whole square has an area of 2 * 2 = 4 m², so half of the surface, 2m², emits 2 m² * 1 lm / m² = 2 lumen. Somehow, I find this unit easier to understand than the candela.</p>
+
+<p>We can again try to see things the other way. It is possible to measure an amount of lumen emitted by a finite area but it not possible to do the same for a single point in space, ie an infinitely small area. One can only measure the Luminous Emittance in lux of single point in space.</p>
+
+<p>I think no one here was confused by the fact that whenever we mentionned the amount of energy emitted by a single point in space, I meant in no specific direction. Every point on the surface of our square, emits 1 lux of Luminous Emittance and this quantity is spread equally over every possible direction. Again, this might seem obvious but our next unit will combine the concepts of lux and candela in a single master unit and you will probably want to read that again.</p>
+
+<h3 id="space-and-direction-combined">Space and Direction combined</h3>
+
+<p>TODO:
+OK + per X means for single X
+OK + present the units from the point of view of the emission
++ prove that for a square area light of area 4 and 1 lumen, a single point doesn&rsquo;t emit 0.25 lumen but 0.25 lux ( infinite energy )
++ Same for candela
+OK + Come back to the SI unit construction scheme
++ Explain the different units used per different lights
++ Remember, virtual point lights consume actual electricity. And that&rsquo;s creepy.</p>
+
+<p><a name="TL_DR"></a></p>
+
+<h2 id="tl-dr">TL;DR</h2>
+
+<h3 id="quantities-and-units">Quantities and units</h3>
+
+<p>// TODO</p>
+
+<h3 id="rendering-equation">Rendering equation</h3>
+
+<table>
+<thead>
+<tr>
+<th>Result</th>
+<th></th>
+<th>Quantity</th>
+<th></th>
+<th>Quantity</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Lout</td>
+<td>=</td>
+<td>E</td>
+<td>*</td>
+<td>f(v, l)</td>
+</tr>
+
+<tr>
+<td>Luminance</td>
+<td>=</td>
+<td>Illuminance</td>
+<td>*</td>
+<td>BSDF</td>
+</tr>
+
+<tr>
+<td>Nit (cd / m²)</td>
+<td>=</td>
+<td>Lux ( lm / m²)</td>
+<td>*</td>
+<td>(1 / sr)</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="luinous-emittance-illuminance">Luinous Emittance - Illuminance</h3>
+
+<h4 id="emission">Emission</h4>
+
+<p>Author E in lux directly in asset creation tool. Every point of the surface emits E lux in total. For single direction, it emits E / PI Nits. Emission Distribution Function = 1 / PI.</p>
+
+<pre><code>Lout = E / PI;
+</code></pre>
+
+<h4 id="ibl">IBL</h4>
+
+<p>Envmap HDR file should be recorded in raw nits.<br />
+Prefiltered envmap contains illuminance values directly in lux.<br />
+Spherical harmonics can be pre-divided by PI as well.</p>
+
+<h4 id="directional-light">Directional Light</h4>
+
+<p>Author E in lux directly in asset creation tool.</p>
+
+<h4 id="spot-and-points">Spot and points</h4>
+
+<table>
+<thead>
+<tr>
+<th>Result</th>
+<th></th>
+<th>Quantity</th>
+<th></th>
+<th>Quantity</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>E</td>
+<td>=</td>
+<td>I                    / d²</td>
+<td>*</td>
+<td>NoL</td>
+</tr>
+
+<tr>
+<td>Illuminance</td>
+<td>=</td>
+<td>Luminous Intensity   / Square Law</td>
+<td>*</td>
+<td>Directional Attenuation</td>
+</tr>
+
+<tr>
+<td>Lux (lm / m²)</td>
+<td>=</td>
+<td>cd                   / m²</td>
+<td>*</td>
+<td>sr</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="luminous-intensity">Luminous Intensity</h3>
+
+<h4 id="point-light">Point light</h4>
+
+<p>Author PHI in lumen directly in asset creation tool.</p>
+
+<table>
+<thead>
+<tr>
+<th>Result</th>
+<th></th>
+<th>Quantity</th>
+<th></th>
+<th>Quantity</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>I</td>
+<td>=</td>
+<td>PHI</td>
+<td>/</td>
+<td>4 * PI</td>
+</tr>
+
+<tr>
+<td>Luminous Intensity</td>
+<td>=</td>
+<td>Luminous Power</td>
+<td>/</td>
+<td>Solid Angle</td>
+</tr>
+
+<tr>
+<td>Candela</td>
+<td>=</td>
+<td>lm</td>
+<td>/</td>
+<td>sr</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="spot-light-with-reflector">Spot light - With reflector</h4>
+
+<p>Author PHI in lumen directly in asset creation tool.</p>
+
+<table>
+<thead>
+<tr>
+<th>Result</th>
+<th></th>
+<th>Quantity</th>
+<th></th>
+<th>Quantity</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>I</td>
+<td>=</td>
+<td>PHI</td>
+<td>/</td>
+<td>( 2 * PI * ( 1 - cos( outerAngle / 2 ) )</td>
+</tr>
+
+<tr>
+<td>Luminous Intensity</td>
+<td>=</td>
+<td>Luminous Power</td>
+<td>/</td>
+<td>Solid Angle of Cone</td>
+</tr>
+
+<tr>
+<td>Candela</td>
+<td>=</td>
+<td>lm</td>
+<td>/</td>
+<td>sr</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="spot-light-with-absorber">Spot light - With absorber</h4>
+
+<p>Author PHI in lumen directly in asset creation tool.</p>
+
+<table>
+<thead>
+<tr>
+<th>Result</th>
+<th></th>
+<th>Quantity</th>
+<th></th>
+<th>Quantity</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>I</td>
+<td>=</td>
+<td>PHI</td>
+<td>/</td>
+<td>PI</td>
+</tr>
+
+<tr>
+<td>Luminous Intensity</td>
+<td>=</td>
+<td>Luminous Power</td>
+<td>/</td>
+<td>Solid Angle</td>
+</tr>
+
+<tr>
+<td>Candela</td>
+<td>=</td>
+<td>lm</td>
+<td>/</td>
+<td>sr</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="light-sources-tl-dr">Light Sources - TL;DR</h3>
+
+<p>In the end, with PHI in lumen and E in lux:</p>
+
+<pre><code>DIR       : Lout = E * BSDF
+POINT     : Lout = PHI / (4.PI * d²) * NoL
+SPOT_PBR  : Lout = PHI / (2.PI * (1 - cos(outerAngle / 2)) * d²) * NoL
+SPOT_ART  : Lout = PHI / (PI * d²) * NoL
+</code></pre>
+
+    </div>
+    
+      <div class="pagination">
+        <div class="pagination__title">
+          <span class="pagination__title-h">Read other posts</span>
+          <hr />
+        </div>
+        <div class="pagination__buttons">
+          
+          
+            <span class="button next">
+              <a href="/posts/compute_shaders/">
+                <span class="button__text">Exploring ways to optimize compute shaders.</span>
+                <span class="button__icon">→</span>
+              </a>
+            </span>
+          
+        </div>
+      </div>
+    
+
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "bitsandpixies" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">François Guthmann</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+      <div class="copyright">
+        <span>© 2021 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+        <span>Theme created by <a href="https://twitter.com/panr" target="_blank" rel="noopener">panr</a></span>
+      </div>
+    
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-105041515-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+  </body>
+</html>

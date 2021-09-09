@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on Bits &amp; Pixies</title>
+    <title>Posts on The GutHub</title>
     <link>/posts/</link>
-    <description>Recent content in Posts on Bits &amp; Pixies</description>
+    <description>Recent content in Posts on The GutHub</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 17 Aug 2019 15:16:15 +0200</lastBuildDate>
+    <lastBuildDate>Sat, 26 Sep 2020 15:16:15 +0200</lastBuildDate>
     
 	<atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Exploring ways to optimize compute shaders - Part 1.</title>
+      <link>/posts/compute_shaders/</link>
+      <pubDate>Sat, 26 Sep 2020 15:16:15 +0200</pubDate>
+      
+      <guid>/posts/compute_shaders/</guid>
+      <description>In this post we&amp;rsquo;ll be looking at compute shaders, profiling tools and failed experiments to improve performance. This is my journey learning compute shaders first through WebGPU and then Vulkan. My goal was to implement Conway&amp;rsquo;s Game Of Life algorithm in a brute force manner and to make it run as fast as possible on the GPU .
+This will not be a tutorial on how to setup compute shaders.</description>
+    </item>
     
     <item>
       <title>Integrating Dear ImGui in a custom Vulkan renderer</title>

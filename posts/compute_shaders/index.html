@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>Exploring ways to optimize compute shaders - Part 1. :: The GutHub — My humble blog</title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="description" content="In this post we&amp;rsquo;ll be looking at compute shaders, profiling tools and failed experiments to improve performance. This is my journey learning compute shaders first through WebGPU and then Vulkan. My goal was to implement Conway&amp;rsquo;s Game Of Life algorithm in a brute force manner and to make it run as fast as possible on the GPU .
+This will not be a tutorial on how to setup compute shaders."/>
+<meta name="keywords" content=""/>
+<meta name="robots" content="noodp"/>
+<link rel="canonical" href="/posts/compute_shaders/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css">
+
+
+<link rel="stylesheet" href="/style.css">
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
+<link rel="shortcut icon" href="/img/favicon.png">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Exploring ways to optimize compute shaders - Part 1."/>
+<meta name="twitter:description" content="In this post we&rsquo;ll be looking at compute shaders, profiling tools and failed experiments to improve performance. This is my journey learning compute shaders first through WebGPU and then Vulkan. My goal was to implement Conway&rsquo;s Game Of Life algorithm in a brute force manner and to make it run as fast as possible on the GPU .
+This will not be a tutorial on how to setup compute shaders."/>
+
+
+
+<meta property="og:title" content="Exploring ways to optimize compute shaders - Part 1." />
+<meta property="og:description" content="In this post we&rsquo;ll be looking at compute shaders, profiling tools and failed experiments to improve performance. This is my journey learning compute shaders first through WebGPU and then Vulkan. My goal was to implement Conway&rsquo;s Game Of Life algorithm in a brute force manner and to make it run as fast as possible on the GPU .
+This will not be a tutorial on how to setup compute shaders." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/compute_shaders/" />
+<meta property="article:published_time" content="2020-09-26T15:16:15+02:00" />
+<meta property="article:modified_time" content="2020-09-26T15:16:15+02:00" /><meta property="og:site_name" content="The GutHub" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">The GutHub</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <span class="header__right" style="margin-left: 0.5rem;">
+      <a href="https://twitter.com/frguthmann" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+</a>
+      <a href="https://github.com/frguthmann" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="currentColor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+</a>
+      <a href="https://www.linkedin.com/in/frguthmann/" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></svg>
+</a>
+    </span>
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/archive">Posts</a></li>
+        
+      
+        
+          <li><a href="/projects">Projects</a></li>
+        
+      
+      
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/archive">Posts</a></li>
+      
+    
+      
+        <li><a href="/projects">Projects</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  <div class="post">
+    <h2 class="post-title"><a href="/posts/compute_shaders/">Exploring ways to optimize compute shaders - Part 1.</a></h2>
+    <div class="post-meta">
+      
+        <span class="post-date">
+            26-09-2020
+        </span>
+      
+      <span class="post-author">— Written by François Guthmann</span>
+      
+        <span class="post-read-time">— 17 min read</span>
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+
+<p>In this post we&rsquo;ll be looking at compute shaders, profiling tools and failed experiments to improve performance. This is my journey learning compute shaders first through WebGPU and then Vulkan. My goal was to implement <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="_blank" rel="noopener noreferrer">Conway&rsquo;s Game Of Life</a> algorithm in a brute force manner and to make it run as fast as possible on the GPU .</p>
+
+<p>This will not be a tutorial on how to setup compute shaders. The easiest way to get started today is probably with WebGPU and <a href="https://developers.google.com/web/updates/2019/08/get-started-with-gpu-compute-on-the-web" target="_blank" rel="noopener noreferrer">this tutorial</a> does a pretty good job at getting you through it.
+Once you&rsquo;re familiar with the API, <a href="https://austineng.github.io/webgpu-samples/?wgsl=0#computeBoids" target="_blank" rel="noopener noreferrer">this example</a> does everything you need to setup a proper Game Of Life.</p>
+
+<h2 id="brute-force-algorithm">Brute Force Algorithm</h2>
+
+<p>Conway&rsquo;s Game Of Life is a cellular automaton with very simple rules. A cell lives or dies depending solely on how many of its neighbours are alive or dead. In our case, we&rsquo;ll be running the simulation in a 2D grid which means a cell has 8 neighbours. The rules are as follows:</p>
+
+<ul>
+<li>A dead cell comes back to life or gets born if exactly 3 of its neighbours are alive.</li>
+<li>A living cell remains alive only if it has 2 or 3 neighbours alive.</li>
+</ul>
+
+<p>Let&rsquo;s look at a very straight forward way to implement this. Our simulation data from the previous simulation step is stored in a 1D array called <code>srcGrid.state</code> and the result should be stored in another 1D array called <code>dstGrid.state</code>. In those arrays, a dead cell is represented by <code>0</code> and a living cell is represented by <code>1</code>. For now we&rsquo;ll consider that somehow the GPU executes 1 thread per cell and that the variable <code>currentCellIndex</code> points to the right address in both <code>srcGrid</code> and <code>dstGrid</code>.</p>
+
+<p>For simplicity, the grid is always square. The coordinate system uses <code>x</code> and <code>y</code> with the origin being <code>(x : 0, y : 0)</code> in the top left corner. I&rsquo;m storing rows one after another in the 1D array.</p>
+
+<p><a href="/images/vulkan_compute/storage_1d.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/vulkan_compute/storage_1d.png"  alt="1D Storage Pattern"  class="left"  style="float: right;"  />
+
+</a></p>
+
+<p>If the grid is of size 2x2, the cells are stored in this order in the 1D array:</p>
+
+<p><code>[ (x : 0, y : 0), (x : 1, y : 0), (x : 0, y : 1), (x : 1, y : 1) ]</code></p>
+
+<p><br/></p>
+
+<p>The conversions to go from 1D to 2D and vice versa are as follows:</p>
+
+<pre><code class="language-c++">uvec2 coordinates2D = uvec2( index1D % GRID_SIZE, index1D / GRID_SIZE);
+uint index1D = coordinates2D.x + coordinates2D.y * GRID_SIZE;
+</code></pre>
+
+<p>One last thing that might be surprising in the code below is that the simulation wraps itself around the edges. For example if a cell is on the right edge of the grid, its right neighbour is on the left edge of the grid. It&rsquo;s not very important but it explains the following line:</p>
+
+<pre><code class="language-c++">coords = (coords + sampleXYOffsets[i] + GRID_SIZE) % GRID_SIZE;
+</code></pre>
+
+<p><a href="/images/vulkan_compute/wrap_simulation.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/vulkan_compute/wrap_simulation.png"  alt="Simulation Wrap"  class="left"  style="float: right;"  />
+
+</a></p>
+
+<p>Let&rsquo;s take our previous example on a 3x3 grid. The cell of coordinates <code>(2, 1)</code> is at the right edge of the grid. The <code>sampleXYOffsets</code> array contains the value <code>(1, 0)</code> for its right neighbour. Now if we apply the formula we get <code>( (2, 1) + (1, 0) + (3, 3) ) % (3, 3) = (6, 4) % (3, 3) = (0, 1)</code>. This is the cell at the left edge of the grid on the same row, as expected. In the image, the red dot cell is the &lsquo;right neighbour&rsquo; of the blue dot cell.</p>
+
+<p>Hopefully you have now all the elements in your hands to understand the main part of our first version of this compute shader.</p>
+
+<pre><code class="language-c++">layout(std430, set = 0, binding = 0) buffer SrcGrid
+{
+    uint state[CELLS_COUNT];
+} srcGrid;
+
+layout(std430, set = 0, binding = 1) buffer DstGrid
+{
+    uint state[CELLS_COUNT];
+} dstGrid;
+
+const ivec2 sampleXYOffsets[] =
+{
+    ivec2(-1, -1),   ivec2(0, -1),  ivec2(1, -1),
+    ivec2(-1,  0),                  ivec2(1,  0),
+    ivec2(-1,  1),   ivec2(0,  1),  ivec2(1,  1),
+};
+
+// We'll get back to this later, the point is currentCellIndex exists
+SOME_MAGIC currentCellIndex;
+
+void main()
+{
+    uint aliveNeighbors = 0;
+    // Convert storage buffer id into grid coordinates (x, y)
+    const uvec2 currentCoords = uvec2( currentCellIndex % GRID_SIZE, currentCellIndex / GRID_SIZE);
+    for( uint i = 0; i &lt; 8; i++ )
+    {
+        uvec2 coords = currentCoords;
+        // Bring everything above 0 to be able to use the modulo operator
+        coords = (coords + sampleXYOffsets[i] + GRID_SIZE) % GRID_SIZE;
+        // Convert grid coordinates (x, y) into storage buffer index
+        uint neighborIndex = coords.x + coords.y * GRID_SIZE;
+        aliveNeighbors += srcGrid.state[neighborIndex];
+    }
+
+    uint currentCellState = srcGrid.state[currentCellIndex];
+    bool isCellAlive = currentCellState &gt; 0;
+
+    // Dead cell comes back to life
+    if( !isCellAlive &amp;&amp; aliveNeighbors == 3 )
+    {
+        dstGrid.state[currentCellIndex] = 1;
+        return;
+    }
+
+    // Alive cell dies
+    if( isCellAlive &amp;&amp; ( aliveNeighbors &lt; 2 || aliveNeighbors &gt; 3 ) )
+    {
+        dstGrid.state[currentCellIndex] = 0;
+        return;
+    }
+
+    // Do not forget to copy the data to the new buffer even if nothing changed
+    dstGrid.state[currentCellIndex] = currentCellState;
+}
+</code></pre>
+
+<h2 id="dispatch-and-threadgroup-size">Dispatch and threadgroup size</h2>
+
+<p>In the previous section we assumed that the GPU somehow managed to map 1 thread to 1 cell and to provide us with the index of that cell in our 1D arrays. It&rsquo;s actually up to the programmer to define how this mapping happens. The first thing we need to understand is that one cannot request the GPU to allocate a single thread. The only interface we get on the CPU is a <code>threadgroup</code>. As the name suggests, it is a group of N threads.</p>
+
+<h3 id="software-interface">Software interface</h3>
+
+<p>Allocating threadgroups on the GPU is usually done by a variant of the <code>dispatch</code> command on the CPU. This command expects 3 arguments, for the x, y and z size of the threadgroup. That&rsquo;s right, one can allocate <code>threadgroups</code> in a 1D, 2D or even 3D fashion. The total number of threadgroups dispatched is the product of x, y and z. For example, to dispatch 4 threads groups, one can either call <code>dispatch(4, 1, 1)</code> or <code>dispatch(2, 2, 1)</code>. Those two commands allocate exactly the same number of threads on the GPU, the only difference is the addressing scheme we&rsquo;ll talk about in a minute.</p>
+
+<p>To decide how many threadgroups we want to allocate we need to know how many threads are allocated per group. Now this is where things can get confusing. Remember when I said a threadgroup is a group of N threads ? Well it&rsquo;s actually a group of x * y * z threads. That&rsquo;s right, one can allocate <code>threads</code> within a <code>group</code> in a 1D, 2D or even 3D fashion. Again, it doesn&rsquo;t really matter what you choose for x, y and z as long as the product of the three matches your target N threads. It will however impact the addressing scheme I mentioned earlier and probably cache performance. This number is set with the <code>local_size</code> attribute in the shader.</p>
+
+<p>If you&rsquo;re like me, at this point you&rsquo;re pretty confused about this whole mess. ( Especially if you&rsquo;ve tried to visualize dispatching 3D threadgroups in 3D ) If it helps, think 1D only for now. We need to dispatch A groups of B threads for a total of A * B threads.</p>
+
+<p>It can also help to think in 2D especially since we&rsquo;re dealing with a grid. Let&rsquo;s first visualize a 2D threadgroup, it&rsquo;s a big patch of x by y cells on the grid. It represents N = x * y cells. Now we know that our entire grid is made of <code>GRID_SIZE</code> by <code>GRID_SIZE</code> cells. To launch a thread per cell we need to allocate enough groups of N threads to reach <code>GRID_SIZE</code> * <code>GRID_SIZE</code> threads.</p>
+
+<p>Let&rsquo;s take a simple example of a threadgroup of size 8 by 8 and a grid of size 32 by 32. We would need to allocate 4 groups on the x axis and 4 groups on the y axis for a total of 4 * 4 = 16 groups to cover the entire grid. Remember one group contains 8 * 8 = 64 threads, that makes a total of 64 * 16 = 1024 threads for the entire grid. We can now check our math and see that our grid of size 32 by 32 indeed needs 32 * 32 = 1024 treads.</p>
+
+<p><a href="/images/vulkan_compute/thread_groups.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/vulkan_compute/thread_groups.png"  alt="Threadgroups Pattern"  class="center"  style="border-radius: 8px;"  />
+
+</a></p>
+
+<p>It is entirely possible to mix and match all those dimensions to create crazy addressing schemes. One could <code>dispatch(x, 1, z)</code> with <code>local_size (1, y, 1)</code> if one were so inclined. I will deny ever putting you up to this.</p>
+
+<h3 id="a-peak-into-the-hardware">A peak into the hardware</h3>
+
+<p>In my project, I wanted to understand this more deeply so I implemented presets which cover dispatch in 1D and 2D with <code>local_size</code> in 1D and 2D as well. This was very useful to realize that a threadgroup must contain a certain number of threads in order not to waste physical resources. This is due to the nature of GPUs, they issue commands in batches of fixed size. For Nvidia a batch of threads is called a warp and is 32 wide while AMD calls this a wavefront and is 64 wide. At the hardware level, theses batches are executed on Simple Instruction Multiple Data ( SIMD ) units. These SIMD units have each a wavefront scheduler and are part of a biger structure called a Compute Unit ( CU ) in AMD terminology and Streaming Multiprocessor for Nvidia. It seems both manufacturers decided to pack 4 SIMD units within a Compute Unit.</p>
+
+<p><a href="https://www.nvidia.com/content/dam/en-zz/Solutions/geforce/ampere/pdf/NVIDIA-ampere-GA102-GPU-Architecture-Whitepaper-V1.pdf" target="_blank" rel="noopener noreferrer">
+  <figure class="center" >
+    <img src="/images/vulkan_compute/streaming_multiprocessor.png"  alt="Streaming Multiprocessor Ampere"   />
+    
+      <figcaption class="center" >Ampere Streaming Multiprocessor</figcaption>
+    
+  </figure>
+
+</a></p>
+
+<p>Now that we have all that in mind, let&rsquo;s say we decide to create a threadgroup of 16 threads. If we try to run this on an Nvidia GPU, it will issue a warp of 32 threads and mask out the execution of half the threads. On an AMD machine it&rsquo;s even worse, we would be wasting 75% of the threads per SIMD unit! This is far from being optimal and unless you have a very good reason you should not create threadgroups of less than 64 threads.</p>
+
+<p>A SIMD unit is also able to schedule multiple wavefronts at the same time. It doesn&rsquo;t mean that they all execute at the same time but it means that they will all execute on this specific SIMD unit. However, if a wavefront A is waiting for something, like a texture read, the SIMD scheduler can decide to replace it with another scheduled wavefront B and to resume wavefront A later when it&rsquo;s ready. This is very useful to hide latency. The less clock cycles the SIMD unit is waiting for something, the more efficient it is. This metric is called occupancy. It might be a good solution then to schedule as many wavefronts per SIMD as you can to hide latency and improve occupancy. While this is true nothing is ever that simple. First there seems to be a hard limit per SIMD unit ( 10 on AMD GCN, not disclosed by Nvidia as far as I know ) and second we are also limited by the Compute Unit&rsquo;s shared hardware.</p>
+
+<p>The two main limiters in a Compute Unit are the VGPR ( Vector General Purpose Register ) and Shared Memory. It is important to understand that a threadgroup cannot be split across multiple Compute Units and that a wavefront can only be scheduled on a single SIMD unit. Moreover, for a wavewront to be scheduled on a SIMD unit, it needs to reserve its hardware resources within the Compute Unit first. This means that all hardware resources needed to execute all of the wavefronts of a single threadgroup must be available in a single Compute Unit. Then and only then can all the wavefronts of that threadgroup be scheduled on the different SIMD units of that Compute Unit. This goes for both VGPR and Shared Memory. To be clear, if a Compute Unit can only accept a threadgroup and a half because of register or shared memory pressure, it will only take a single threadgroup&rsquo;s workload and the potential maximum occupancy of its SIMD units might get reduced.</p>
+
+<p><a href="https://docs.nvidia.com/cuda/cuda-occupancy-calculator/index.html" target="_blank" rel="noopener noreferrer">
+  <figure class="center" >
+    <img src="/images/vulkan_compute/occupancy_calculator.png"  alt="Cuda Occupancy Calculator"   />
+    
+      <figcaption class="center" >The Cuda Occupancy Calculator can help identify pressure points for Nvidia hardware</figcaption>
+    
+  </figure>
+
+</a></p>
+
+<p>Again, you have to run the numbers to understand potential occupancy, it might be ok to have a single threadgroup assigned if it can be split into a lot of wavefronts. That being said, the maximum size of a threadgroup is 1024 and an architecture like GCN is able handle 2 of those maximum, so it&rsquo;s probably suboptimal. On top of that, the more granularity we give the scheduler, the better it can do its job.</p>
+
+<p>Getting back to our specific example, we can try different combinations on our computer and see which suits our GPU best. Here are a few examples on my RTX 2070 for a grid of 20000x20000. First let&rsquo;s see what happens with threadgroups of size 64. The &ldquo;Throughput %&rdquo; metric tells us how close we are to saturating the hardware. If we reach 100%, it means that this part of the hardware cannot execute more operations. However, that doesn&rsquo;t mean that we use it in an optimal way.</p>
+
+<p><a href="/images/vulkan_compute/metrics_naive_1D_8_x2.png" target="_blank" rel="noopener noreferrer">
+  <figure class="center" >
+    <img src="/images/vulkan_compute/metrics_naive_1D_8_x2.png"  alt="Metrics 1D - 1D"   />
+    
+      <figcaption class="center" >Dispatch ( 6250000, 1, 1 ) - local_size ( 64, 1, 1 ) ~ 13.5ms</figcaption>
+    
+  </figure>
+
+</a></p>
+
+<p><a href="/images/vulkan_compute/metrics_naive_2D_8_xy.png" target="_blank" rel="noopener noreferrer">
+  <figure class="center" >
+    <img src="/images/vulkan_compute/metrics_naive_2D_8_xy.png"  alt="Metrics 1D - 1D"   />
+    
+      <figcaption class="center" >Dispatch ( 2500, 2500, 1 ) - local_size ( 8, 8, 1 ) ~ 19ms</figcaption>
+    
+  </figure>
+
+</a></p>
+
+<p>Now the same thing but with threadgroups of size 256.</p>
+
+<p><a href="/images/vulkan_compute/metrics_naive_1D_16_x2.png" target="_blank" rel="noopener noreferrer">
+  <figure class="center" >
+    <img src="/images/vulkan_compute/metrics_naive_1D_16_x2.png"  alt="Metrics 1D - 1D"   />
+    
+      <figcaption class="center" >Dispatch ( 1562500, 1, 1 ) - local_size ( 256, 1, 1 ) ~ 13ms</figcaption>
+    
+  </figure>
+
+</a></p>
+
+<p><a href="/images/vulkan_compute/metrics_naive_2D_16_xy.png" target="_blank" rel="noopener noreferrer">
+  <figure class="center" >
+    <img src="/images/vulkan_compute/metrics_naive_2D_16_xy.png"  alt="Metrics 1D - 1D"   />
+    
+      <figcaption class="center" >Dispatch ( 1250, 1250, 1 ) - local_size ( 16, 16, 1 ) ~ 15ms</figcaption>
+    
+  </figure>
+
+</a></p>
+
+<p>In my case it appears that dispatching in 1D to a 1D <code>local_size</code> yields the best results. A threadgroup of size 64 or 256 doesn&rsquo;t seem to have too much impact in that configuration. On the other hand, in a 2D / 2D configuration a threadgroup size of 16 x 16 is clearly faster. Unfortunately, it&rsquo;s quite hard to know why for sure. Since the way threadgroups are dispatched directly impacts the order in which the cells of my simulation are treated it may also impact cache locality. There&rsquo;s even a blog post called <a href="https://developer.nvidia.com/blog/optimizing-compute-shaders-for-l2-locality-using-thread-group-id-swizzling/">Optimizing Compute Shaders for L2 Locality using Thread-Group ID Swizzling</a> about this but it&rsquo;s not super relevant to our program.</p>
+
+<h2 id="first-optimization-nsight-driven">First optimization - Nsight Driven</h2>
+
+<p>Ok so now we know what the software interface is, we have some idea of what the hardware constraints are and our first version of the shader works. It is very straight forward - read all the neighbors, count the living cells and then overwrite the result with whatever state we got. What does Nsight say about this? This is what it looks like in steady state for a 20k by 20k grid, dispatch in 1D using 1D threadgroup size of 64 on my RTX 2070.</p>
+
+<p><a href="/images/vulkan_compute/compute_write_all_cut.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/vulkan_compute/compute_write_all_cut.png"  alt="Nsight GPU Trace"  class="left"  style="border-radius: 8px;"  />
+
+</a></p>
+
+<p>Meh, it looks ok to me at 11.5ms, I don&rsquo;t know, maybe? I had no clue really so I watched a few talks from Nvidia on how to use the tool and make sense of the data it provides. They mostly advertise the P3 method <a href="https://developer.nvidia.com/blog/the-peak-performance-analysis-method-for-optimizing-any-gpu-workload/" target="_blank" rel="noopener noreferrer">Peak Performance Percentage</a> which relies on multiple metrics. This blog post is a bit outdated and relies on the Frame Profiler part of Nsight but it still provides a lot of insight on how the tool works.</p>
+
+<p>We&rsquo;ll be using the latest and greatest part of Nsight called GPU trace instead ( available with Turing ) because it suits async compute workloads better. There is yet another Nvidia blog post about it <a href="https://developer.nvidia.com/blog/optimizing-vk-vkr-and-dx12-dxr-applications-using-nsight-graphics-gpu-trace-advanced-mode-metrics/">here</a>. If you read the old blog post, you can replace <code>SOL</code> by <code>throughput</code> which is their newest terminology but it exactly the same thing.</p>
+
+<p>Ok so following the method we&rsquo;ll want to investigate the top throughput units first. On the right part of the screenshot, you can see that the VRAM is at 66%. According to the method, this means we&rsquo;re either limited by the latency of the VRAM or we&rsquo;re giving it too much work. The third top limiter is L2 though at a low 48% so let&rsquo;s suppose we&rsquo;re latency limited for now and investigate that path. This is also convenient because that&rsquo;s exactly what the second blog post I linked is investigating as well :p.</p>
+
+<p>Since our VRAM is our top limiter, we might want to investigate how it is accessed and if we can do better. Here is what the blog post has to say about this.</p>
+
+<blockquote>
+<p>On all NVIDIA GPUs after at least Fermi, all VRAM traffic goes through the L2 cache, so we can use L2 metrics to understand what requests are made to the VRAM.</p>
+</blockquote>
+
+<p>This makes sense, we have a low throughput for L2 too. So Nsight lets you see through the <code>metrics</code> tab what unit accessed the L2 cache. The blog post mentions searching for <code>srcunit</code> which doesn&rsquo;t work anymore but looking for <code>L2</code> will do the trick. Here is what we get for that search.</p>
+
+<p><a href="/images/vulkan_compute/compute_write_all_L2.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/vulkan_compute/compute_write_all_L2.png"  alt="Nsight GPU Trace L2 Traffic Ratio"  class="center"  style="border-radius: 8px;"  />
+
+</a></p>
+
+<p>That&rsquo;s interesting, if we look at the L2 Traffic Ratio 20% of overall traffic is dedicated to writing while 80% is dedicated to reading. It makes sense because for each cell, we have to read 9 cells and only write to one. However, this sounds like a lot of writing. What if my board is really sparse? I&rsquo;m usually testing with a single planner moving through the grid, we can make this faster for this use case.</p>
+
+<p>The writes we want to get it rid of are the ones that copy data from one SSBO to another when the data didn&rsquo;t change. Basically, we want to get rid of the last line of the shader when the data didn&rsquo;t change.</p>
+
+<pre><code class="language-c++">// Do not forget to copy the data to the new buffer even if nothing changed
+dstGrid.state[currentCellIndex] = currentCellState;  
+</code></pre>
+
+<p>If nothing changed, let&rsquo;s not make useless writes. With very little changes to the code, we can register which cells changed in the last rotation in order to avoid redundant copies. Instead of storing 1 for a cell that is alive and 0 for a dead cell, we&rsquo;ll store 3 for a cell that is alive and was just updated and 2 for a dead cell that was just updated. This allows us to easily check if the cell is alive or not with a simple <code>cellState % 2</code> and barely changes our shader.</p>
+
+<pre><code class="language-c++">uint currentCellState = srcGrid.state[currentCellIndex];
+bool isCellAlive = currentCellState % 2 == 1;
+
+// Dead cell comes back to life
+if( !isCellAlive &amp;&amp; aliveNeighbors == 3 )
+{
+    dstGrid.state[currentCellIndex] = 3;
+    return;
+}
+
+// Alive cell dies
+if( isCellAlive &amp;&amp; ( aliveNeighbors &lt; 2 || aliveNeighbors &gt; 3 ) )
+{
+    dstGrid.state[currentCellIndex] = 2;
+    return;
+}   
+</code></pre>
+
+<p>And now we have the info we need to ditch that last write. If none of the 2 above ifs are triggered, we enter the part of the code that does a stupid copy. But now, we can check the value of the current state and figure out whether it was updated during the last iteration. If its value is greater than 1 ( 2 or 3 ), than yes it was updated in the last rotation and we need to update the dst SSBO. We also want to flag this cell as up to date and for that, we&rsquo;ll use our old state code: 0 for dead and 1 for alive. This doesn&rsquo;t break our previous test to check if a cell is alive or dead.</p>
+
+<pre><code class="language-c++">// If this cell was previously modified, update it. Otherwise it's already up to date.
+if( currentCellState &gt; 1 )
+{
+    dstGrid.state[currentCellIndex] = currentCellState - 2;
+}    
+</code></pre>
+
+<p>So what does Nsight have to say about this modification?</p>
+
+<p><a href="/images/vulkan_compute/compute_write_smart_cut.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/vulkan_compute/compute_write_smart_cut.png"  alt="Nsight GPU Trace"  class="left"  style="border-radius: 8px;"  />
+
+</a></p>
+
+<p>Whoohoo, we almost shaved of 2ms it&rsquo;s about 20% faster! Go us! If we look at our top throughput units, SM is now at 75% and VRAM and L2 are kept in check way below at around 40-45%. That&rsquo;s a great win! And without any surprises, if we look at our L2 traffic origin, we can see that 99.7% of our L2 traffic comes L1TEX Reads!</p>
+
+<p><a href="/images/vulkan_compute/compute_write_smart_L2.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/vulkan_compute/compute_write_smart_L2.png"  alt="Nsight GPU Trace L2 Traffic Ratio"  class="center"  style="border-radius: 8px;"  />
+
+</a></p>
+
+<p>That&rsquo;s a nice win, we profiled the app, found a bottleneck with Nsight, fixed it with minimal code change and it&rsquo;s actually faster! As a reminder, this optimization is mostly valid for sparse grids. I have tried filling the grid with random data and the compute pass takes about 13.5ms to complete. This is worse than our original solution though, so to be used with caution.</p>
+
+<h2 id="coming-soon">Coming Soon</h2>
+
+<p>In the next blog post I will be investigating more ways to optimize this shader further.</p>
+
+<p>One idea that succeeded was to make each thread read multiple cells from the SSBO, store them in registers and then process them. This used to be way slower on my RTX 2070 until I recently updated my graphics drivers and Vulkan version. I&rsquo;m not sure which did the trick but it is now faster than the brute force version. The size of the island is limited by register pressure though.</p>
+
+<p>I have also tried the previous technique but with shared memory, I&rsquo;ve tried to use uint8 data instead of full blown floats, I&rsquo;ve tried to use subgroup ballot operations and even swizzling tiles without any luck. I&rsquo;ll go over those failed attempts as well.</p>
+
+<p>I&rsquo;ll hopefully see you for part two, in the meantime here is a bonus thread about a weird bug I encountered! <a href="https://twitter.com/frguthmann/status/1299002817412321281?s=20">https://twitter.com/frguthmann/status/1299002817412321281?s=20</a></p>
+
+    </div>
+    
+      <div class="pagination">
+        <div class="pagination__title">
+          <span class="pagination__title-h">Read other posts</span>
+          <hr />
+        </div>
+        <div class="pagination__buttons">
+          
+          
+            <span class="button next">
+              <a href="/posts/vulkan_imgui/">
+                <span class="button__text">Integrating Dear ImGui in a custom Vulkan renderer</span>
+                <span class="button__icon">→</span>
+              </a>
+            </span>
+          
+        </div>
+      </div>
+    
+
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "bitsandpixies" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">François Guthmann</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+      <div class="copyright">
+        <span>© 2021 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+        <span>Theme created by <a href="https://twitter.com/panr" target="_blank" rel="noopener">panr</a></span>
+      </div>
+    
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-105041515-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+  </body>
+</html>
