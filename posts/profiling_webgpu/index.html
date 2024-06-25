@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>GPU profiling for WebGPU workloads on Windows with Chrome :: The GutHub — My humble blog</title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="description" content="Fast Forward If you&amp;rsquo;ve read the article already and/or want to jump straight to profiling, go to the TL;DR section.
+Context WebGPU is not a native graphics API, as in no hardware vendor provides specific drivers for their GPUs targeting this API. Instead, WebGPU runtimes like web browsers must implement backends for WebGPU using modern native APIs such as DirectX12, Vulkan or Metal. Those APIs are widely used, in particular for video games, and hardware vendors have developed great profiling tools for them."/>
+<meta name="keywords" content=""/>
+<meta name="robots" content="noodp"/>
+<link rel="canonical" href="/posts/profiling_webgpu/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css">
+
+
+<link rel="stylesheet" href="/style.css">
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
+<link rel="shortcut icon" href="/img/favicon.png">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="GPU profiling for WebGPU workloads on Windows with Chrome"/>
+<meta name="twitter:description" content="Fast Forward If you&rsquo;ve read the article already and/or want to jump straight to profiling, go to the TL;DR section.
+Context WebGPU is not a native graphics API, as in no hardware vendor provides specific drivers for their GPUs targeting this API. Instead, WebGPU runtimes like web browsers must implement backends for WebGPU using modern native APIs such as DirectX12, Vulkan or Metal. Those APIs are widely used, in particular for video games, and hardware vendors have developed great profiling tools for them."/>
+
+
+
+<meta property="og:title" content="GPU profiling for WebGPU workloads on Windows with Chrome" />
+<meta property="og:description" content="Fast Forward If you&rsquo;ve read the article already and/or want to jump straight to profiling, go to the TL;DR section.
+Context WebGPU is not a native graphics API, as in no hardware vendor provides specific drivers for their GPUs targeting this API. Instead, WebGPU runtimes like web browsers must implement backends for WebGPU using modern native APIs such as DirectX12, Vulkan or Metal. Those APIs are widely used, in particular for video games, and hardware vendors have developed great profiling tools for them." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/profiling_webgpu/" />
+<meta property="article:published_time" content="2024-06-09T11:55:28+02:00" />
+<meta property="article:modified_time" content="2024-06-09T11:55:28+02:00" /><meta property="og:site_name" content="The GutHub" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">The GutHub</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <span class="header__right" style="margin-left: 0.5rem;">
+      <a href="https://twitter.com/frguthmann" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+</a>
+      <a href="https://github.com/frguthmann" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="currentColor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+</a>
+      <a href="https://www.linkedin.com/in/frguthmann/" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></svg>
+</a>
+    </span>
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/archive">Posts</a></li>
+        
+      
+        
+          <li><a href="/projects">Projects</a></li>
+        
+      
+      
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/archive">Posts</a></li>
+      
+    
+      
+        <li><a href="/projects">Projects</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  <div class="post">
+    <h2 class="post-title"><a href="/posts/profiling_webgpu/">GPU profiling for WebGPU workloads on Windows with Chrome</a></h2>
+    <div class="post-meta">
+      
+        <span class="post-date">
+            09-06-2024
+        </span>
+      
+      
+      
+        <span class="post-read-time">— 8 min read</span>
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+
+<h1 id="fast-forward">Fast Forward</h1>
+
+<p>If you&rsquo;ve read the article already and/or want to jump straight to profiling, go to the <a href="#TL_DR">TL;DR</a> section.</p>
+
+<h1 id="context">Context</h1>
+
+<p>WebGPU is not a native graphics API, as in no hardware vendor provides specific drivers for their GPUs targeting this API. Instead, WebGPU runtimes like web browsers must implement backends for WebGPU using modern native APIs such as DirectX12, Vulkan or Metal. Those APIs are widely used, in particular for video games, and hardware vendors have developed great profiling tools for them.</p>
+
+<p>Sadly those GPU profilers don&rsquo;t work out of the box with WebGPU workloads executed by Chrome. The main reason for this is that while Chrome does execute such workloads using the aformentioned graphics APIs, it doesn&rsquo;t present the rendered content on screen using those APIs. There are good reasons for this and the technical details are not important here, the point is GPU profilers wouldn&rsquo;t work and it made me sad.</p>
+
+<p>The good news is I found a way to work around that limitation! It&rsquo;s a terrible hack but in practice it works well. All you need to do is download a DLL I wrote and put it in the correct location to get both AMD&rsquo;s Radeon GPU Profiler and Nvidia&rsquo;s Nsight to work! See the details in the next section. Also, while this only works on Windows I have seen this <a href="https://gist.github.com/slimbuck/ec4500afaec6b2c5368c22a37153826d" target="_blank" rel="noopener noreferrer">gist</a> floating around for Apple, but I have nothing for Linux :/.</p>
+
+<p>If you are interested in what was missing, how I fixed it and what this mysterious DLL is doing, please read the following companion blog post <a href="https://frguthmann.github.io/posts/shimming_d3d12/" target="_blank" rel="noopener noreferrer">Shimming d3d12.dll for fun and profit</a>. I would also like to thank <a href="https://mastodon.gamedev.place/@theWarhelm" target="_blank" rel="noopener noreferrer">Marco Castorina</a> and <a href="https://x.com/raydey" target="_blank" rel="noopener noreferrer">Ray Dey</a> without whom this hack probably wouldn&rsquo;t exist :).</p>
+
+<h1 id="how-to-use">How to use</h1>
+
+<blockquote>
+<p>⚠ <strong>Before anything else, please remember that this is a hacky solution and that you should not browse the open web with that DLL attached. It should only be used for a GPU profiling session and removed afterwards. It also conflicts with PIX, so you should remove it before attempting to take a capture. I would recommend adding that DLL to a specific flavor of Chrome ( Dev, Canary, etc. ) that you would only use for GPU profiling.</strong></p>
+</blockquote>
+
+<h2 id="getting-the-dll">Getting the DLL</h2>
+
+<p>Go to the <a href="https://github.com/frguthmann/d3d12_webgpu_shim" target="_blank" rel="noopener noreferrer">following repository</a> and either download <code>d3d12.dll</code> from the release section or download the repository and build it yourself. Place the DLL in the Chrome folder where <code>chrome.exe</code> exists, for instance:
+<code>C:\Program Files\Google\Chrome\Application</code></p>
+
+<h2 id="chrome-command-line-arguments">Chrome command line arguments</h2>
+
+<p>The way you should launch Chrome depends on the profiler you will be using. However, the command line arguments required are mostly the same as the ones used to capture a frame with PIX as described in
+<a href="https://toji.dev/webgpu-profiling/pix.html#running-chrome-in-pix" target="_blank" rel="noopener noreferrer">Tojiro&rsquo;s blog</a>.</p>
+
+<p>For reference, here are the arguments I use:</p>
+
+<ol>
+<li><code>--disable-gpu-sandbox --disable-gpu-watchdog</code></li>
+<li><code>--enable-dawn-features=emit_hlsl_debug_symbols,disable_symbol_renaming</code></li>
+<li><code>--no-sandbox</code></li>
+<li><code>--disable-direct-composition</code></li>
+</ol>
+
+<p>The first arguments are the minimum required to capture a frame. The second ones are convenience arguments that let you inspect shader source with the original variable names. The third one is required by Nvidia Nsight to function properly, I have no idea why. The last argument used to be required to capture Chrome with PIX so I keep it around just in case.</p>
+
+<h2 id="enabling-debug-markers">Enabling debug markers</h2>
+
+<p>To enable debug markers, we&rsquo;ll again refer to <a href="https://toji.dev/webgpu-profiling/pix.html#enabling-debug-markers" target="_blank" rel="noopener noreferrer">Tojiro&rsquo;s blog</a>. The gist of it is to copy <code>WinPixEventRuntime.dll</code> from <code>https://www.nuget.org/packages/WinPixEventRuntime</code> into <code>&lt;Chrome Dir&gt;\&lt;Version Number&gt;</code>.</p>
+
+<p>Unfortunately, the Radeon tools don&rsquo;t support PIX markers out of the box. No problem, I wrote a modified version of <code>WinPixEventRuntime.dll</code> that is supported by the Radeon tools. This DLL is hardware vendor agnostic and will only enhance the PIX markers on AMD hardware. The process to get it is exactly the same as getting the modified <code>d3d12.dll</code>. Simply go the <a href="https://github.com/frguthmann/PixEventsAMD" target="_blank" rel="noopener noreferrer">following repository</a> and either download <code>WinPixEventRuntime.dll</code> from the release section or clone the repository and build it yourself.</p>
+
+<h2 id="capturing-a-frame-with-rdp">Capturing a frame with RDP</h2>
+
+<p>To profile with AMD&rsquo;s Radeong GPU Profiler, you need to download the Radeon Developer Tool Suite from <a href="https://gpuopen.com/introducing-radeon-developer-tool-suite/" target="_blank" rel="noopener noreferrer">GPUOpen</a>. Download the package and unzip it at any location you see fit, all the apps are portable.</p>
+
+<p>Double-click on the Radeon Developer Panel&rsquo;s exe to start it. If this is the first time you&rsquo;re using it, you will likely need to select a feature you would like to use from the top left corner. In our case, we would like to profile the GPU so we will select <code>Profiling</code>.</p>
+
+<p><a href="/images/profiling_webgpu/rdp_features.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/profiling_webgpu/rdp_features.png"  alt="An image showing the available features in RDP"  class="center"  style="border-radius: 8px;"  />
+
+</a></p>
+
+<p>Please note the green dot on left of the connection tab. If that dot is red, you might need to go to that tab and hit the connect button in the bottom right corner but normally it should connect automatically.</p>
+
+<p>When the Radeon Developer Panel is open, connected and has the <code>Profiling</code> feature selected, any DirectX12, Vulkan, OpenCL or HIP application that you launch from now on will be automatically detected and attached to. This means we are now ready to launch Chrome.</p>
+
+<p>Since RDP doesn&rsquo;t need to launch the app for you, feel free to open your favorite terminal and to launch Chrome from there using the previously mentioned CLI arguments. The overall command line should look something like this:<br />
+<code>&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot; --no-sandbox --disable-gpu-sandbox --disable-gpu-watchdog --disable-direct-composition --enable-dawn-features=emit_hlsl_debug_symbols,disable_symbol_renaming</code></p>
+
+<p>Now open a WebGPU app in a tab and if everything is working properly you should see RDP&rsquo;s <code>Profiling</code> tab change from <code>Status: Offline</code> to <code>Status: Ready</code>.</p>
+
+<p><a href="/images/profiling_webgpu/rdp_ready.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/profiling_webgpu/rdp_ready.png"  alt="An image showing what the profiling tab of RDP should look like when connected."  class="center"  style="border-radius: 8px;"  />
+
+</a></p>
+
+<p>You can now hit the <code>Capture profile</code> button or use the configurable hot key <code>Ctrl+Alt+C</code> to capture your WebGPU app. The profile should appear on the right side of the app under <code>Recently collected profiles</code>.</p>
+
+<p><a href="/images/profiling_webgpu/recently_collected_profiles.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/profiling_webgpu/recently_collected_profiles.png"  alt="An image showing the recently collected profile table in RDP"  class="center"  style="border-radius: 8px;"  />
+
+</a></p>
+
+<p>Simply double-click any of the files to open the Radeon GPU profiler. If that doesn&rsquo;t work, you might need to configure that path manually by hitting the cog-wheel in the top right hand corner of your screen.</p>
+
+<p><a href="/images/profiling_webgpu/rgp.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/profiling_webgpu/rgp.png"  alt="An image showing the events tab of a RGP capture."  class="center"  style="border-radius: 8px;"  />
+
+</a></p>
+
+<p>And voila, you are ready to explore the performance of your app using RGP. How to use RGP itself is outside the scope of this post but another one might follow ;). In the meantime, feel free to explore the following resources.</p>
+
+<ul>
+<li><a href="https://gpuopen.com/rgp/" target="_blank" rel="noopener noreferrer">RGP Documentation</a></li>
+<li><a href="https://www.youtube.com/watch?v=NWUodnjCYpg" target="_blank" rel="noopener noreferrer">GDC 2024 - Game Optimization with the Radeon™ Developer Tool Suite (YT video)</a></li>
+<li><a href="https://gpuopen.com/gdc-presentations/2024/GDC2024_Game_Optimization_with_The_Radeon_Developer_Tool_Suite.pdf" target="_blank" rel="noopener noreferrer">GDC 2024 - Game Optimization with the Radeon™ Developer Tool Suite (slides)</a></li>
+<li><a href="https://gpuopen.com/learn/occupancy-explained/" target="_blank" rel="noopener noreferrer">Occupancy Explained (shameless plug) </a></li>
+</ul>
+
+<h2 id="capturing-a-frame-with-nsight">Capturing a frame with Nsight</h2>
+
+<p>To profile with Nvidia hardware, first download and install <a href="https://developer.nvidia.com/nsight-graphics/get-started" target="_blank" rel="noopener noreferrer">Nsight Graphics</a>. Much like PIX, Nsight must launch an app itself to be able to profile it. So open Nsight, click the connect button in the top left corner and select <code>GPU Trace Profiler</code> from the <code>Activity</code> tab.</p>
+
+<p><a href="/images/profiling_webgpu/nsight_setup.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/profiling_webgpu/nsight_setup.png"  alt="An image showing how to setup the GPU trace mode of Nsight"  class="center"  style="border-radius: 8px;"  />
+
+</a></p>
+
+<p>Select your Chrome executable in the <code>Application Executable</code> field, the path should look something like <code>C:\Program Files\Google\Chrome\Application\chrome.exe</code>. Don&rsquo;t forget to fill the <code>Command Line Arguments</code> field with the relevant arguments, including the required <code>--no-sandbox</code>. The field should look something like <code>--no-sandbox --disable-gpu-sandbox --disable-gpu-watchdog --disable-direct-composition --enable-dawn-features=emit_hlsl_debug_symbols,disable_symbol_renaming</code>.</p>
+
+<p>Once those fields are filled, just hit the <code>Launch GPU Trace</code> button in the bottom right corner and watch Chrome start. Open a tab with a WebGPU workload to make Nsight connect automatically. If the operation succeeded the app&rsquo;s layout should change and a new <code>Collect GPU Trace</code> button should appear.</p>
+
+<p><a href="/images/profiling_webgpu/nsight_capture_button.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/profiling_webgpu/nsight_capture_button.png"  alt="An image showing where the capture button is in the Nsight interface"  class="center"  style="border-radius: 8px;"  />
+
+</a></p>
+
+<p>Once you&rsquo;ve hit that button, a message box should inform you that the capture succeeded. Just press the <code>Open</code> button to access the capture.</p>
+
+<p><a href="/images/profiling_webgpu/nsight_capture_finished.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/profiling_webgpu/nsight_capture_finished.png"  alt="An image showing the message box after Nsight finished capturing a frame."  class="center"  style="border-radius: 8px;"  />
+
+</a></p>
+
+<p>You should now see the following view and should be able to explore the performance of your app.</p>
+
+<p><a href="/images/profiling_webgpu/nsight_main_view.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/profiling_webgpu/nsight_main_view.png"  alt="An image showing the main interface of Nsight"  class="center"  style="border-radius: 8px;"  />
+
+</a></p>
+
+<p>How to use Nsight itself is outside the scope of this post but feel free to explore the following resources.</p>
+
+<ul>
+<li><a href="https://developer.nvidia.com/nsight-graphics/get-started#documentation" target="_blank" rel="noopener noreferrer">Nsight Documentation</a></li>
+<li><a href="https://developer.nvidia.com/blog/harness-powerful-shader-insights-using-shader-debug-info-with-nvidia-nsight-graphics/" target="_blank" rel="noopener noreferrer">Powerful Shader Insights: Using Shader Debug Info with NVIDIA Nsight Graphics</a></li>
+<li><a href="https://developer.nvidia.com/blog/identifying-shader-limiters-with-the-shader-profiler-in-nvidia-nsight-graphics/" target="_blank" rel="noopener noreferrer">Identifying Shader Limiters with the Shader Profiler in NVIDIA Nsight Graphics</a></li>
+<li><a href="https://developer.nvidia.com/blog/optimizing-vk-vkr-and-dx12-dxr-applications-using-nsight-graphics-gpu-trace-advanced-mode-metrics/" target="_blank" rel="noopener noreferrer">Optimizing VK/VKR and DX12/DXR Applications Using Nsight Graphics: GPU Trace Advanced Mode Metrics</a><br /></li>
+</ul>
+
+<h1 id="closing-remarks">Closing Remarks</h1>
+
+<p>The solution provided here is a terrible hack that happens to trigger both RDP and Nsight at the time of writing this article. It&rsquo;s entirely possible that this breaks tomorrow and there isn&rsquo;t much I can do about it.</p>
+
+<p>That being said, at this time it is also the only available option to properly profile the GPU for WebGPU on Windows / Chrome. This was my biggest pain point when working daily with WebGL, along with the lack of a proper graphics debugger. Now WebGPU has both through PIX and RGP/Nsight. To me that makes it a much more viable option for serious graphics programming. Performance doesn&rsquo;t have to be about mythical knowledge and voodoo optimizing blindfolded with both hands tied in the back anymore. Fire up that profiler and look at some actual metrics!</p>
+
+<p><a name="TL_DR"></a></p>
+
+<h1 id="tl-dr">TL;DR</h1>
+
+<blockquote>
+<p>⚠ <strong>Before anything else, please remember that this is a hacky solution and that you should not browse the open web with that DLL attached. It should only be used for a GPU profiling session and removed afterwards. It also conflicts with PIX, so you should remove it before attempting to take a capture. I would recommend adding that DLL to a specific flavor of Chrome ( Dev, Canary, etc. ) that you would only use for GPU profiling.</strong></p>
+</blockquote>
+
+<h2 id="instructions">Instructions</h2>
+
+<ol>
+<li>Download <code>d3d12.dll</code> from the release section of <a href="https://github.com/frguthmann/d3d12_webgpu_shim" target="_blank" rel="noopener noreferrer">this repository</a>.
+
+<ul>
+<li>Place the DLL into the <code>\Google\Chrome\Application</code> folder.</li>
+</ul></li>
+<li>On AMD, download <code>WinPixEventRuntime.dll</code> from the release section of <a href="https://github.com/frguthmann/PixEventsAMD" target="_blank" rel="noopener noreferrer">that repository</a>.
+
+<ul>
+<li>Place it into the <code>\Google\Chrome\Application\&lt;Version Number&gt;</code> folder.</li>
+</ul></li>
+<li>When launching Chrome, use the following command line arguments:
+
+<ul>
+<li><code>--no-sandbox --disable-gpu-sandbox --disable-gpu-watchdog --disable-direct-composition --enable-dawn-features=emit_hlsl_debug_symbols,disable_symbol_renaming</code></li>
+</ul></li>
+<li>Use your favorite GPU profiler as usual.<br /></li>
+</ol>
+
+    </div>
+    
+      <div class="pagination">
+        <div class="pagination__title">
+          <span class="pagination__title-h">Read other posts</span>
+          <hr />
+        </div>
+        <div class="pagination__buttons">
+          
+            <span class="button previous">
+              <a href="/posts/shimming_d3d12/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Shimming d3d12.dll for fun and profit</span>
+              </a>
+            </span>
+          
+          
+            <span class="button next">
+              <a href="/posts/compute_shaders/">
+                <span class="button__text">Exploring ways to optimize compute shaders - Part 1.</span>
+                <span class="button__icon">→</span>
+              </a>
+            </span>
+          
+        </div>
+      </div>
+    
+
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "bitsandpixies" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">François Guthmann</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+      <div class="copyright">
+        <span>© 2024 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+        <span>Theme created by <a href="https://twitter.com/panr" target="_blank" rel="noopener">panr</a></span>
+      </div>
+    
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-105041515-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+  </body>
+</html>

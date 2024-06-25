@@ -6,13 +6,32 @@
     <description>Recent content in Posts on The GutHub</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 26 Sep 2020 15:16:15 +0200</lastBuildDate>
+    <lastBuildDate>Sun, 09 Jun 2024 12:55:28 +0200</lastBuildDate>
     
 	<atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Exploring ways to optimize compute shaders - Part 1</title>
+      <title>Shimming d3d12.dll for fun and profit</title>
+      <link>/posts/shimming_d3d12/</link>
+      <pubDate>Sun, 09 Jun 2024 12:55:28 +0200</pubDate>
+      
+      <guid>/posts/shimming_d3d12/</guid>
+      <description>Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise. However, when it comes to profiling, well the situation is not that great. For instance, AMD&amp;rsquo;s Radeon Developer Panel will detect Chrome as a DX12 app (when using the proper flags), it will attach to the process and even let me start a capture.</description>
+    </item>
+    
+    <item>
+      <title>GPU profiling for WebGPU workloads on Windows with Chrome</title>
+      <link>/posts/profiling_webgpu/</link>
+      <pubDate>Sun, 09 Jun 2024 11:55:28 +0200</pubDate>
+      
+      <guid>/posts/profiling_webgpu/</guid>
+      <description>Fast Forward If you&amp;rsquo;ve read the article already and/or want to jump straight to profiling, go to the TL;DR section.
+Context WebGPU is not a native graphics API, as in no hardware vendor provides specific drivers for their GPUs targeting this API. Instead, WebGPU runtimes like web browsers must implement backends for WebGPU using modern native APIs such as DirectX12, Vulkan or Metal. Those APIs are widely used, in particular for video games, and hardware vendors have developed great profiling tools for them.</description>
+    </item>
+    
+    <item>
+      <title>Exploring ways to optimize compute shaders - Part 1.</title>
       <link>/posts/compute_shaders/</link>
       <pubDate>Sat, 26 Sep 2020 15:16:15 +0200</pubDate>
       

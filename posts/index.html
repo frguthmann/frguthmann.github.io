@@ -36,7 +36,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="/posts/" />
 
-<meta property="og:updated_time" content="2020-09-26T15:16:15+02:00" /><meta property="og:site_name" content="The GutHub" />
+<meta property="og:updated_time" content="2024-06-09T12:55:28+02:00" /><meta property="og:site_name" content="The GutHub" />
 
 
 
@@ -130,7 +130,62 @@
 
     
     <div class="post on-list">
-      <h1 class="post-title"><a href="/posts/compute_shaders/">Exploring ways to optimize compute shaders - Part 1</a></h1>
+      <h1 class="post-title"><a href="/posts/shimming_d3d12/">Shimming d3d12.dll for fun and profit</a></h1>
+      <div class="post-meta">
+        <span class="post-date">
+          09-06-2024
+        </span>
+        
+        
+          <span class="post-read-time">— 16 min read</span>
+        
+      </div>
+
+
+      
+
+      
+
+      <div class="post-content">
+        
+          
+            Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise. However, when it comes to profiling, well the situation is not that great. For instance, AMD&rsquo;s Radeon Developer Panel will detect Chrome as a DX12 app (when using the proper flags), it will attach to the process and even let me start a capture.
+          
+        
+      </div>
+      <div><a class="read-more button" href="/posts/shimming_d3d12/">Read more →</a></div>
+    </div>
+    
+    <div class="post on-list">
+      <h1 class="post-title"><a href="/posts/profiling_webgpu/">GPU profiling for WebGPU workloads on Windows with Chrome</a></h1>
+      <div class="post-meta">
+        <span class="post-date">
+          09-06-2024
+        </span>
+        
+        
+          <span class="post-read-time">— 8 min read</span>
+        
+      </div>
+
+
+      
+
+      
+
+      <div class="post-content">
+        
+          
+            Fast Forward If you&rsquo;ve read the article already and/or want to jump straight to profiling, go to the TL;DR section.
+Context WebGPU is not a native graphics API, as in no hardware vendor provides specific drivers for their GPUs targeting this API. Instead, WebGPU runtimes like web browsers must implement backends for WebGPU using modern native APIs such as DirectX12, Vulkan or Metal. Those APIs are widely used, in particular for video games, and hardware vendors have developed great profiling tools for them.
+          
+        
+      </div>
+      <div><a class="read-more button" href="/posts/profiling_webgpu/">Read more →</a></div>
+    </div>
+    
+    <div class="post on-list">
+      <h1 class="post-title"><a href="/posts/compute_shaders/">Exploring ways to optimize compute shaders - Part 1.</a></h1>
       <div class="post-meta">
         <span class="post-date">
           26-09-2020
@@ -211,7 +266,7 @@ This will not be a tutorial on how to setup compute shaders.
 </a>
 
       <div class="copyright">
-        <span>© 2021 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+        <span>© 2024 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
         <span>Theme created by <a href="https://twitter.com/panr" target="_blank" rel="noopener">panr</a></span>
       </div>
     

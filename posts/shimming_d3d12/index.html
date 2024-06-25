@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>Shimming d3d12.dll for fun and profit :: The GutHub — My humble blog</title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="description" content="Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise. However, when it comes to profiling, well the situation is not that great. For instance, AMD&amp;rsquo;s Radeon Developer Panel will detect Chrome as a DX12 app (when using the proper flags), it will attach to the process and even let me start a capture."/>
+<meta name="keywords" content=""/>
+<meta name="robots" content="noodp"/>
+<link rel="canonical" href="/posts/shimming_d3d12/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css">
+
+
+<link rel="stylesheet" href="/style.css">
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
+<link rel="shortcut icon" href="/img/favicon.png">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Shimming d3d12.dll for fun and profit"/>
+<meta name="twitter:description" content="Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise. However, when it comes to profiling, well the situation is not that great. For instance, AMD&rsquo;s Radeon Developer Panel will detect Chrome as a DX12 app (when using the proper flags), it will attach to the process and even let me start a capture."/>
+
+
+
+<meta property="og:title" content="Shimming d3d12.dll for fun and profit" />
+<meta property="og:description" content="Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise. However, when it comes to profiling, well the situation is not that great. For instance, AMD&rsquo;s Radeon Developer Panel will detect Chrome as a DX12 app (when using the proper flags), it will attach to the process and even let me start a capture." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/shimming_d3d12/" />
+<meta property="article:published_time" content="2024-06-09T12:55:28+02:00" />
+<meta property="article:modified_time" content="2024-06-09T12:55:28+02:00" /><meta property="og:site_name" content="The GutHub" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">The GutHub</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <span class="header__right" style="margin-left: 0.5rem;">
+      <a href="https://twitter.com/frguthmann" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+</a>
+      <a href="https://github.com/frguthmann" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="currentColor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+</a>
+      <a href="https://www.linkedin.com/in/frguthmann/" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></svg>
+</a>
+    </span>
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/archive">Posts</a></li>
+        
+      
+        
+          <li><a href="/projects">Projects</a></li>
+        
+      
+      
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/archive">Posts</a></li>
+      
+    
+      
+        <li><a href="/projects">Projects</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  <div class="post">
+    <h2 class="post-title"><a href="/posts/shimming_d3d12/">Shimming d3d12.dll for fun and profit</a></h2>
+    <div class="post-meta">
+      
+        <span class="post-date">
+            09-06-2024
+        </span>
+      
+      
+      
+        <span class="post-read-time">— 16 min read</span>
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+
+<h1 id="why-would-anyone-do-this">Why would anyone do this?</h1>
+
+<p>I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise. However, when it comes to profiling, well the situation is not that great. For instance, AMD&rsquo;s Radeon Developer Panel will detect Chrome as a DX12 app (when using the proper flags), it will attach to the process and even let me start a capture. The problem is this capture will never complete. As someone who profiles GPU workloads for a living, it is very frustrating not being able to do this in my own personal project. This post is the story of how I fixed that by shimming <code>d3d12.dll</code> and badgering <a href="https://mastodon.gamedev.place/@theWarhelm" target="_blank" rel="noopener noreferrer">Marco Castorina</a> and <a href="https://x.com/raydey" target="_blank" rel="noopener noreferrer">Ray Dey</a> with questions. ( Thanks guys!) You can find the code <a href="https://github.com/frguthmann/d3d12_webgpu_shim" target="_blank" rel="noopener noreferrer">here</a> and learn how to use it in my companion blog post <a href="https://frguthmann.github.io/posts/profiling_webgpu/" target="_blank" rel="noopener noreferrer">GPU profiling for WebGPU workloads on Windows with Chrome</a>.</p>
+
+<h1 id="figuring-out-what-s-missing">Figuring out what&rsquo;s missing</h1>
+
+<p>From the get-go, I had the intuition that the issue lied somewhere around presenting the image to the screen. I knew that GPU profilers usually rely on present events to determine what workload makes up a frame. Since the profiler would attach and let me start a capture but never complete, it seemed fairly natural to assume it never caught the triggering event.</p>
+
+<p>The first thing I did was to ask the Chrome people if there was any chance to force Chrome to present through DX12. Sadly, there is no development flag or anything of the sort available. I&rsquo;m not entirely sure how Chrome presents the image in the end but I know it can be complicated and that the WebGPU swapchain image is in the end just a texture shared with the main process that does the final compositing*. ( Don&rsquo;t quote me on this, Chrome people feel free to correct me )</p>
+
+<p>However, they pointed me towards an arcane DX12 feature <a href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/dawn/src/dawn/native/d3d12/TextureD3D12.cpp;drc=c0265133106c7647e90f9aaa4377d28190b1a6a9;l=471" target="_blank" rel="noopener noreferrer">they use</a> to let PIX know when the present event would happen if they were to actually present.</p>
+
+<pre><code class="language-c++">void Texture::NotifySwapChainPresentToPIX() {
+    // In PIX's D3D12-only mode, there is no way to determine frame boundaries
+    // for WebGPU since Dawn does not manage DXGI swap chains. Without assistance,
+    // PIX will wait forever for a present that never happens.
+    // If we know we're dealing with a swapbuffer texture, inform PIX we've
+    // &quot;presented&quot; the texture so it can determine frame boundaries and use its
+    // contents for the UI.
+    if (mSwapChainTexture) {
+        ID3D12SharingContract* d3dSharingContract =
+            ToBackend(GetDevice()-&gt;GetQueue())-&gt;GetSharingContract();
+        if (d3dSharingContract != nullptr) {
+            d3dSharingContract-&gt;Present(mResourceAllocation.GetD3D12Resource(), 0, 0);
+        }
+    }
+}
+</code></pre>
+
+<p>What the hell is a <code>ID3D12SharingContract</code> you ask? Honestly I&rsquo;m still not sure, feel free to read the <a href="https://learn.microsoft.com/en-us/windows/win32/api/d3d12sdklayers/nn-d3d12sdklayers-id3d12sharingcontract" target="_blank" rel="noopener noreferrer">documentation</a>. No matter what it is, the following bit is not super reassuring.</p>
+
+<blockquote>
+<p>Note that this interface is not supported when there are no diagnostic tools present, so your application mustn&rsquo;t rely on it existing.</p>
+</blockquote>
+
+<p>That kind of sounds PIX specific to me. How would I even let the runtime know?</p>
+
+<p><a href="/images/shimming_d3d12/captain.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/shimming_d3d12/captain.png"  alt="I am the captain now meme, captain replaced with diagnotics tool"  class="center"  style="border-radius: 8px;"  />
+
+</a></p>
+
+<p>Let&rsquo;s assume for now that this thing is working and that Chrome calls its <code>Present</code> function. How would AMD&rsquo;s profiler catch it? The profiler works at the user mode driver level, so the D3D12 runtime would have to pass that information all the way down. I already know that the runtime doesn&rsquo;t pass things like PIX markers, because for RGP to see markers we need to pass them through AMD&rsquo;s AGS library. This does not bode well.</p>
+
+<p>I&rsquo;m not a driver engineer but out of curiosity I looked at what Microsoft exposes in its documentation and it&rsquo;s surprisingly decent? At least as an outside observer who&rsquo;s never tried to actually implement a driver. It tells you which <a href="https://learn.microsoft.com/en-us/windows-hardware/drivers/display/direct3d-functions-implemented-by-user-mode" target="_blank" rel="noopener noreferrer">functions</a> the driver should implement and which runtime <a href="https://learn.microsoft.com/en-us/windows-hardware/drivers/display/direct3d-runtime-functions-called-by-user-mode" target="_blank" rel="noopener noreferrer">callbacks</a> the driver can call. Unsurprinsingly, no mention of sharing contracts and even then, that would mean modifying the user mode driver.</p>
+
+<p>At this point I was a bit frustrated that the only thing that seemed to be missing was a present to catch my workload. That&rsquo;s when I started to think, what if I present <em>something</em>. Anything really, it doesn&rsquo;t matter. If it&rsquo;s from the right process, the right device, the right <em>something</em> maybe that would work. I would have to somehow be able to know when <code>ID3D12SharingContract::Present</code> is called and to insert an actual <code>Present</code> call instead. I was starting to look into <a href="https://github.com/microsoft/Detours" target="_blank" rel="noopener noreferrer">Microsoft Detours</a> (which I believe could achieve the same result) when Marco reminded me that <a href="https://github.com/LunarG/gfxreconstruct" target="_blank" rel="noopener noreferrer">GFXReconstruct</a> exists, does exactly what I want and is open source!</p>
+
+<p>GFXReconstruct is a library that is able to capture every single call made to a graphics API, record and replay them later for analysis. It is very powerful and even lets you capture multiple frames of an AAA game. The way it works is by <em>shimming</em> the <code>d3d12</code> and <code>dxgi</code> runtimes. It replaces the original <code>d3d12.dll</code> and <code>dxgi.dll</code> files, exposes the same functions, does some extra work and then calls the actual functions in the original DLL. It&rsquo;s brilliant and exactly what I need. If I can wrap the <code>ID3D12SharingContract</code> object in my shim and get Chrome to load my DLL, I should be able to call the actual present function which would trigger the profiler. Honestly it was a long shot and with implementation setbacks set aside it worked flawlessly on the first try! Not only did it fix AMD&rsquo;s profiler but Nvidia&rsquo;s as well.</p>
+
+<h1 id="implementation">Implementation</h1>
+
+<p>Fair warning, most of this is a blatant copy of what GFXReconstruct does. I haven&rsquo;t invented anything, I&rsquo;ve just straight up stolen GFXReconstruct&rsquo;s code, simplified it and inserted the bits of code I needed in the right places.</p>
+
+<h2 id="creating-the-dll">Creating the DLL</h2>
+
+<p>Alright, so we&rsquo;ll be building a DLL. We need to create a <code>d3d12.def</code> file where we define the functions we would like to expose. GFXReconstruct exposes all of the <code>d3d12.dll</code> functions, I don&rsquo;t need that many. I have only exposed the ones that <a href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/angle/third_party/dawn/src/dawn/native/d3d12/PlatformFunctionsD3D12.cpp;l=55?q=D3D12CreateDevice&ss=chromium%2Fchromium%2Fsrc&start=41" target="_blank" rel="noopener noreferrer">Chrome requires</a> in my <a href="https://github.com/frguthmann/d3d12_webgpu_shim/blob/master/src/d3d12_webgpu_shim.def" target="_blank" rel="noopener noreferrer">def file</a>.</p>
+
+<pre><code class="language-c++">LIBRARY d3d12
+EXPORTS
+D3D12CreateDevice=D3D12CreateDevice_webgpu_shim @101
+D3D12GetDebugInterface=D3D12GetDebugInterface_webgpu_shim @102
+D3D12SerializeRootSignature=D3D12SerializeRootSignature_webgpu_shim @115
+D3D12CreateRootSignatureDeserializer=D3D12CreateRootSignatureDeserializer_webgpu_shim @107
+D3D12SerializeVersionedRootSignature=D3D12SerializeVersionedRootSignature_webgpu_shim @116
+D3D12CreateVersionedRootSignatureDeserializer=D3D12CreateVersionedRootSignatureDeserializer_webgpu_shim @108
+</code></pre>
+
+<p>We now need to define those functions in <code>d3d12_webgpu_shim.cpp</code>. For now they don&rsquo;t have to do anything, but they need to be present otherwise the DLL won&rsquo;t compile. It&rsquo;s also trivial to define them as their prototypes is exposed in <code>d3d12.h</code>, just return <code>S_OK</code> in the body of the function and the compiler should be happy. For instance, our shim <code>D3D12CreateDevice_webgpu_shim</code> function would look like this.</p>
+
+<pre><code class="language-c++">HRESULT WINAPI D3D12CreateDevice_webgpu_shim(
+    _In_opt_ IUnknown* pAdapter,
+    D3D_FEATURE_LEVEL MinimumFeatureLevel,
+    _In_ REFIID riid, // Expected: ID3D12Device
+    _COM_Outptr_opt_ void** ppDevice)
+{
+    return S_OK;
+}
+</code></pre>
+
+<p>Then we need to define what happens when our DLL is loaded, this is done through a function called <code>DllMain</code>. We can already test if Chrome will load our DLL by displaying a message box within this function and placing the DLL next to <code>chrome.exe</code>.</p>
+
+<pre><code class="language-c++">BOOL WINAPI DllMain(
+    HINSTANCE hinstDLL,
+    DWORD fdwReason,
+    LPVOID lpvReserved)
+{
+    MessageBox(NULL, &quot;I'm the runtime now!&quot;, &quot;Look at me&quot;, NULL);
+
+    return TRUE;
+}
+</code></pre>
+
+<p>Note that Chrome won&rsquo;t load our DLL by default, probably as a security measure. It turns out that launching Chrome with the same flags required to take a PIX capture fixes that issue <code>--disable-gpu-sandbox --disable-gpu-watchdog</code>.</p>
+
+<p><a href="/images/shimming_d3d12/message_box.png" target="_blank" rel="noopener noreferrer">
+  <img src="/images/shimming_d3d12/message_box.png"  alt="A picture of the message box over the webgpu samples page."  class="center"  style="border-radius: 8px;"  />
+
+</a></p>
+
+<p>Success! Chrome does load my DLL and I am the runtime now. Small problem though, the page crashes, nothing is displayed. That is not surprising as our DLL is not doing anything apart from displaying a message box yet!</p>
+
+<h2 id="implementing-the-functions">Implementing the functions</h2>
+
+<p>Fixing that issue is fairly easy. All we have to do is to make our shim functions passthrough, as in they should call the actual functions from the regular <code>d3d12.dll</code>. For this, we need to first load the regular DLL from the system directory. We can then gather the function pointers we&rsquo;re interested in from this DLL and store them for later. This is all happening in our <code>DllMain</code> function.</p>
+
+<pre><code class="language-c++">if (fdwReason == DLL_PROCESS_ATTACH)
+{
+    char systemDirectoryChar[MAX_PATH];
+    UINT result = GetSystemDirectory(systemDirectoryChar, MAX_PATH);
+    if (result == 0) {
+        return FALSE;
+    }
+
+    std::string coreLibDirectory(systemDirectoryChar);
+    d3d12Handle = LoadLibraryA((coreLibDirectory + &quot;\\d3d12.dll&quot;).c_str());
+    if (d3d12Handle == NULL)
+    {
+        return FALSE;
+    }
+
+    g_D3D12CreateDevice = reinterpret_cast&lt;PFN_D3D12_CREATE_DEVICE&gt;(GetProcAddress(d3d12Handle, &quot;D3D12CreateDevice&quot;));
+    g_D3D12GetDebugInterface = reinterpret_cast&lt;PFN_D3D12_GET_DEBUG_INTERFACE&gt;(GetProcAddress(d3d12Handle, &quot;D3D12GetDebugInterface&quot;));
+    g_D3D12SerializeRootSignature = reinterpret_cast&lt;PFN_D3D12_SERIALIZE_ROOT_SIGNATURE&gt;(GetProcAddress(d3d12Handle, &quot;D3D12SerializeRootSignature&quot;));
+    g_D3D12CreateRootSignatureDeserializer = reinterpret_cast&lt;PFN_D3D12_CREATE_VERSIONED_ROOT_SIGNATURE_DESERIALIZER&gt;(GetProcAddress(d3d12Handle, &quot;D3D12CreateRootSignatureDeserializer&quot;));
+    g_D3D12SerializeVersionedRootSignature = reinterpret_cast&lt;PFN_D3D12_SERIALIZE_VERSIONED_ROOT_SIGNATURE&gt;(GetProcAddress(d3d12Handle, &quot;D3D12SerializeVersionedRootSignature&quot;));
+    g_D3D12CreateVersionedRootSignatureDeserializer = reinterpret_cast&lt;PFN_D3D12_CREATE_VERSIONED_ROOT_SIGNATURE_DESERIALIZER&gt;(GetProcAddress(d3d12Handle, &quot;D3D12CreateVersionedRootSignatureDeserializer&quot;));
+    g_D3D12EnableExperimentalFeatures = reinterpret_cast&lt;PFN_D3D12_ENABLE_EXPERIMENTAL_FEATURES&gt;(GetProcAddress(d3d12Handle, &quot;D3D12EnableExperimentalFeatures&quot;));
+}
+</code></pre>
+
+<p>Making a function passthrough is then just a matter of using those pointers to call the functions from the original <code>d3d12.dll</code>.</p>
+
+<pre><code class="language-c++">HRESULT WINAPI D3D12GetDebugInterface_webgpu_shim(
+    _In_ REFIID riid,
+    _COM_Outptr_opt_ void** ppvDebug)
+{
+    return g_D3D12GetDebugInterface(riid, ppvDebug);
+}
+</code></pre>
+
+<p>If all went well, with those changes we should now not only own the runtime but also not make the page crash! Before moving on to the interesting part, let&rsquo;s not forget to free the library we loaded when the DLL detaches from the process in <code>DllMain</code>.</p>
+
+<pre><code class="language-c++">else if (fdwReason == DLL_PROCESS_DETACH)
+{
+    FreeLibrary(d3d12Handle);
+}
+</code></pre>
+
+<h2 id="wrapping-the-device">Wrapping the device</h2>
+
+<p>Cool, cool&hellip; cool, cool, cool. We ain&rsquo;t any closer to profiling the GPU yet. True! But now that the device creation goes through our code, we can wrap it and insert code in any of its functions! We&rsquo;ll do this in the <code>D3D12CreateDevice_webgpu_shim</code> function. First we will call the actual <code>D3D12CreateDevice</code> function. Then we will create our wrapper object from the actual <code>ID3D12Device*</code> (casted to an <code>IUnknown*</code>, more on that later) and finally we will return the pointer to our wrapper to Chrome (through the inout <code>ppDevice</code> argument) as well as the return code provided by <code>D3D12CreateDevice</code>.</p>
+
+<pre><code class="language-c++">HRESULT WINAPI D3D12CreateDevice_webgpu_shim(
+    _In_opt_ IUnknown* pAdapter,
+    D3D_FEATURE_LEVEL MinimumFeatureLevel,
+    _In_ REFIID riid, // Expected: ID3D12Device
+    _COM_Outptr_opt_ void** ppDevice)
+{
+    HRESULT res = g_D3D12CreateDevice(pAdapter, MinimumFeatureLevel, riid, ppDevice);
+
+    if (res == S_OK)
+    {
+        ID3D12Device_webgpu_shim* device = new ID3D12Device_webgpu_shim(reinterpret_cast&lt;IUnknown*&gt;(*ppDevice));
+        *ppDevice = device;
+    }
+
+    return res;
+}
+</code></pre>
+
+<p>Our wrapper object is also fairly simple. We can look at the <code>ID3D12Device</code> interface in <code>d3d12.h</code> and create a class that implements this interface. We can already note that this interface inherits from <code>ID3D12Object</code> which itself inherits from <code>IUnknown</code>. We will need to wrap all of those as well. This is also the reason why we casted <code>*ppDevice</code> to <code>IUnknown*</code> earlier, this pointer will be stored as a class attribute in <code>IUnknown_webgpu_shim</code> under the name <code>object_</code>. All wrapped classes will store the pointer to the original object as an <code>IUnknown*</code> there.</p>
+
+<p>We also need to add a constructor to our <code>ID3D12Device_webgpu_shim</code> class that takes an <code>IUnknown*</code> as a parameter to pass it on to the parent class&rsquo; constructor until it reaches <code>IUnknown_webgpu_shim</code>.</p>
+
+<pre><code class="language-c++">class ID3D12Device_webgpu_shim : public ID3D12Object_webgpu_shim
+{
+public:
+    ID3D12Device_webgpu_shim(IUnknown* wrapped_object) : ID3D12Object_webgpu_shim(wrapped_object) {};
+///...
+}
+</code></pre>
+
+<p>The wrapped functions&rsquo; implementations are now trivial, all we have to do is cast <code>object_</code> to the correct pointer type and call the regular function on it. Here is one example but we need to do this for all the functions defined in the <code>ID3D12Device</code> interface.</p>
+
+<pre><code class="language-c++">virtual HRESULT STDMETHODCALLTYPE CreateGraphicsPipelineState(
+    _In_  const D3D12_GRAPHICS_PIPELINE_STATE_DESC* pDesc,
+    REFIID riid,
+    _COM_Outptr_  void** ppPipelineState)
+{
+    return reinterpret_cast&lt;ID3D12Device*&gt;(object_)-&gt;CreateGraphicsPipelineState(pDesc, riid, ppPipelineState);
+}
+</code></pre>
+
+<p>We will need to repeat the exact same process for <code>ID3D12Object_webgpu_shim</code> and <code>IUnknown_webgpu_shim</code>. The only difference for the later is that it needs to define <code>object_</code> as a <code>protected</code> class attribute. Hopefully, if all went well our shim is still working properly. We are not doing anything interesting yet but we are 100% passthrough.</p>
+
+<h3 id="memory-cleanup">Memory cleanup</h3>
+
+<p>The astute reader will notice however that we have allocated memory for our wrapper <code>ID3D12Device_webgpu_shim</code> but have never freed it. We are also not keeping any reference to it so we can&rsquo;t really call <code>delete</code> when we&rsquo;re done. What we know though, is that to free a device in D3D12, we call <code>device-&gt;Release()</code>. And as it turns out, we did implement <code>Release</code> in our <code>IUnknown_webgpu_shim</code> wrapper.</p>
+
+<p>If we knew that there were no references to the wrapper left, we could probably delete it from there right? I am far from an expert on this but apparently this is classic strategy! All we have to do is add a <code>refCount_</code> attribute to our wrapper, initialize it to one on creation, increase it by one in the <code>AddRef</code> function, decrease it by one in the <code>Release</code> function and when it reaches zero, call <code>delete this</code>.</p>
+
+<p>Small problem, if we want the destructors from the entire chain to be called, we need to declare <code>IUnknown_webgpu_shim</code>&rsquo;s destructor as virtual. And that for some reason seems to break the shim. I&rsquo;m not 100% sure why but it looks like it messes up the vtable, <em>something something</em> it&rsquo;s not described in the <code>IUnknown</code> interface? (CPP experts let me know) My solution to this is to override the <code>Release</code> function in the child class. It explicitely calls <code>IUnknown_webgpu_shim::Release()</code> first, and then calls <code>delete this</code> if <code>refCount_</code> is zero. Note that here it doesn&rsquo;t matter as our <code>ID3D12Device_webgpu_shim</code> class doesn&rsquo;t need to do anything in its destructor but it will become important later.</p>
+
+<pre><code class="language-c++">virtual ULONG STDMETHODCALLTYPE Release() override
+{
+    HRESULT res = IUnknown_webgpu_shim::Release();
+
+    if (refCount_ == 0)
+    {
+        delete this;
+    }
+
+    return res;
+}
+</code></pre>
+
+<h2 id="catching-the-sharing-contract">Catching the sharing contract</h2>
+
+<p>Ok so far we have implemented a wrapper for the <code>ID3D12Device</code> interface, but we&rsquo;re still not catching the creation of the sharing contract. Looking some more at <a href="https://source.chromium.org/chromium/chromium/src/+/main:third_party/dawn/src/dawn/native/d3d12/QueueD3D12.cpp;l=71;drc=90cac1911508d3d682a67c97aa62483eb712f69a" target="_blank" rel="noopener noreferrer">Chrome&rsquo;s code</a>, we can see that this sharing contract is created by calling the <a href="https://learn.microsoft.com/fr-fr/cpp/cppcx/wrl/comptr-class?view=msvc-170#as" target="_blank" rel="noopener noreferrer">As</a> method of a <code>ComPtr&lt;ID3D12CommandQueue&gt;</code>.</p>
+
+<pre><code class="language-c++">// If PIX is not attached, the QueryInterface fails. Hence, no need to check the return
+// value.
+mCommandQueue.As(&amp;mD3d12SharingContract);
+</code></pre>
+
+<p>That&rsquo;s an excellent news! The <code>As</code> function internally calls the <code>QueryInterface</code> function which is defined in <code>IUnknown</code>, and <code>ID3D12CommandQueue</code> inherits from the <code>IUnknown</code> interface. We can thus simply create a command queue wrapper that overrides the <code>QueryInterface</code> function. In there, we can check whether <code>rrid == IID_ID3D12SharingContract</code>, and if that&rsquo;s the case we can instanciate our sharing contract wrapper the same way we did for the device.</p>
+
+<pre><code class="language-c++">virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** object)
+{
+    HRESULT res = object_-&gt;QueryInterface(riid, object);
+
+    if (riid == IID_ID3D12SharingContract)
+    {
+        ID3D12SharingContract_webgpu_shim* sharingContract = new ID3D12SharingContract_webgpu_shim(reinterpret_cast&lt;IUnknown*&gt;(*object));
+        *object = sharingContract;
+    }
+    return res;
+}
+</code></pre>
+
+<p>Please note that our sharing contract wrapper needs to be slightly different from the other wrappers because the underlying object might not exist.</p>
+
+<blockquote>
+<p>This interface is not supported when there are no diagnostic tools present, so your application mustn&rsquo;t rely on it existing.</p>
+</blockquote>
+
+<p>In an attempt to make that DLL compatible with PIX I&rsquo;ve decided to still try and call the actual functions when the call to <code>QueryInterface</code> succeeded but honestly I might as well have done nothing in those.</p>
+
+<pre><code class="language-c++">virtual void STDMETHODCALLTYPE SharedFenceSignal(
+    _In_  ID3D12Fence* pFence,
+    UINT64 FenceValue)
+{
+    if (object_ != nullptr)
+    {
+        return reinterpret_cast&lt;ID3D12SharingContract*&gt;(object_)-&gt;SharedFenceSignal(pFence, FenceValue);
+    }
+}
+</code></pre>
+
+<h2 id="presenting-for-real">Presenting for real</h2>
+
+<p>Phew, so we finally managed to catch the creation of the sharing contract, wrap it and make it passthrough. At that point I added a message box in the <code>Present</code> function and validated that I got one every frame. We&rsquo;ve never been this close to trying our theory. Will calling the actual <code>Present</code> function trigger the profilers? What are they listening to? Any present in the same process? Presenting requires a swapchain, what swapchain are we presenting? Do profilers listen to any swapchain that is attached to the command queue that ran the work? Any command queue? Creating a swapchain usually requires a window, should I create a new window? So many questions!</p>
+
+<p>Let&rsquo;s take a deep breath and try the easiest thing. My first attempt was to create a swapchain the classic way, using <code>CreateSwapChainForHwnd</code> with a window and everything. And yes, I did spend some time figuring out that the parameter called <code>pDevice</code> expects a <code>ID3D12CommandQueue</code>, <a href="https://learn.microsoft.com/en-us/windows/win32/api/dxgi1_2/nf-dxgi1_2-idxgifactory2-createswapchainforhwnd" target="_blank" rel="noopener noreferrer">obviously</a>. It was a bit of a mess, I needed to store the <code>HINSTANCE</code> of the DLL, define my window class and so on. I actually finished the prototype with this implementation but I later changed for <code>CreateSwapChainForComposition</code> which makes everything simpler so we&rsquo;ll pretend I did that on the first go. This function doesn&rsquo;t require a window and works perfectly fine for my use case :).</p>
+
+<p>Creating the swapchain itself is pretty straight forward. You will need a <code>IDXGIFactory4</code> which you can get by calling <code>DXGICreateFactory</code>. This is a DXGI function though, so you&rsquo;ll need to load <code>dxgi.dll</code> in <code>DllMain</code>, get a pointer to that function and store it somewhere, much like for <code>D3D12CreateDevice</code> and others.</p>
+
+<pre><code class="language-c++">    dxgiHandle = LoadLibraryA((coreLibDirectory + &quot;\\dxgi.dll&quot;).c_str());
+    if (dxgiHandle == NULL)
+    {
+        return FALSE;
+    }
+    g_DXGICreateFactory = reinterpret_cast&lt;PFN_CREATE_DXGI_FACTORY&gt;(GetProcAddress(dxgiHandle, &quot;CreateDXGIFactory&quot;));
+</code></pre>
+
+<p>On top of this factory you&rsquo;ll need a swapchain descriptor, I&rsquo;ve made it as simple as possible. It&rsquo;s a 1 by 1 pixel <code>R8G8B8A8_UNORM</code> render target with 2 buffers and <code>SampleDesc.Count</code> set to one. I have also set the scaling to <code>DXGI_SCALING_STRETCH</code> and the swap effect to <code>DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL</code> as mandated by the <a href="https://learn.microsoft.com/en-us/windows/win32/api/dxgi1_2/nf-dxgi1_2-idxgifactory2-createswapchainforcomposition" target="_blank" rel="noopener noreferrer">docs</a>.</p>
+
+<p>Now to create this swapchain we still need to pass it a <code>ID3D12CommandQueue</code> as the first parameter. The simplest solution for me was to create a swapchain every time a new command queue is created. This is super easy, let&rsquo;s just move the code we described above in <code>ID3D12CommandQueue_webgpu_shim</code>&rsquo;s constructor and store a pointer to the swapchain as a class member. Note that we&rsquo;ll need to call <code>swapchain_-&gt;Release();</code> in the destructor to free it. Good thing we checked that our entire chain of destructors was actually called earlier!</p>
+
+<pre><code class="language-c++">ID3D12CommandQueue_webgpu_shim(IUnknown* wrapped_object) : swapChain_(nullptr), ID3D12Pageable_webgpu_shim (wrapped_object)
+{
+    ComPtr&lt;IDXGIFactory4&gt; factory;
+    HRESULT hr = g_DXGICreateFactory(IID_PPV_ARGS(&amp;factory));
+    if (hr != S_OK)
+    {
+        return;
+    }
+
+    DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
+    swapChainDesc.Width = 1;
+    swapChainDesc.Height = 1;
+    swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    swapChainDesc.BufferCount = 2;
+    swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
+    swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+    swapChainDesc.SampleDesc.Count = 1;
+
+    factory-&gt;CreateSwapChainForComposition((IUnknown*)object_, &amp;swapChainDesc, nullptr, &amp;swapChain_);
+};
+</code></pre>
+
+<p>I actually wonder if we could get away with creating our own device, command queue and swapchain once and for all in <code>DllMain</code> and always present from that one swapchain. I might come back and update this post if I get around to it. For now, this is left as an exercise to the reader :p.</p>
+
+<p>Alright we&rsquo;re very very close from the end here. We have a swapchain per command queue from which we can present but what we actually want is to present from the <code>ID3D12SharingContract_webgpu_shim</code> class. Not a problem. The <code>ID3D12SharingContract_webgpu_shim</code> object is created in the <code>QueryInterface</code> function of <code>ID3D12CommandQueue_webgpu_shim</code>. All we have to do is pass on the <code>swapchain_</code> class member to <code>ID3D12SharingContract_webgpu_shim</code>&rsquo;s constructor and store it there as a class attribute as well.</p>
+
+<pre><code class="language-c++">class ID3D12SharingContract_webgpu_shim: public IUnknown_webgpu_shim
+{
+public:
+    ID3D12SharingContract_webgpu_shim(IUnknown* wrapped_object, IDXGISwapChain1* swapChain) : swapChain_(swapChain), IUnknown_webgpu_shim(wrapped_object) {};
+// ...
+private:
+    IDXGISwapChain1* swapChain_;
+}
+</code></pre>
+
+<p>The last thing we need to do is to implement the <code>Present</code> function in <code>ID3D12SharingContract_webgpu_shim</code>, which is as simple as calling <code>swapChain_-&gt;Present(0, 0);</code>.</p>
+
+<pre><code class="language-c++">virtual void STDMETHODCALLTYPE Present(
+    _In_  ID3D12Resource * pResource,
+    UINT Subresource,
+    _In_  HWND window)
+{
+    if (swapChain_ != nullptr)
+    {
+        swapChain_-&gt;Present(0, 0);
+    }
+}
+</code></pre>
+
+<h1 id="closing-thoughts">Closing thoughts</h1>
+
+<p>And I think that&rsquo;s it folks. Once I had implemented this, it just worked. I thought it would be the hard part but nope, it did work on the first try! All there is to do now is to learn how to use it with my companion blog post <a href="https://frguthmann.github.io/posts/profiling_webgpu/" target="_blank" rel="noopener noreferrer">GPU profiling for WebGPU workloads on Windows with Chrome</a>, get some xp using a GPU profiler and optimize the hell out of all the web based renderers you cross path with!</p>
+
+<p>Thanks a lot for reading thus far, please leave a comment if you have questions or anything to say. I&rsquo;m eager to know what your thoughts are on this nice little hack 😁.</p>
+
+    </div>
+    
+      <div class="pagination">
+        <div class="pagination__title">
+          <span class="pagination__title-h">Read other posts</span>
+          <hr />
+        </div>
+        <div class="pagination__buttons">
+          
+          
+            <span class="button next">
+              <a href="/posts/profiling_webgpu/">
+                <span class="button__text">GPU profiling for WebGPU workloads on Windows with Chrome</span>
+                <span class="button__icon">→</span>
+              </a>
+            </span>
+          
+        </div>
+      </div>
+    
+
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "bitsandpixies" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">François Guthmann</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+      <div class="copyright">
+        <span>© 2024 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+        <span>Theme created by <a href="https://twitter.com/panr" target="_blank" rel="noopener">panr</a></span>
+      </div>
+    
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-105041515-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+  </body>
+</html>
