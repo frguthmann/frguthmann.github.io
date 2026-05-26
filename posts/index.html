@@ -36,7 +36,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="/posts/" />
 
-<meta property="og:updated_time" content="2024-06-09T12:55:28+02:00" /><meta property="og:site_name" content="The GutHub" />
+<meta property="og:updated_time" content="2026-05-26T00:00:00+02:00" /><meta property="og:site_name" content="The GutHub" />
 
 
 
@@ -130,6 +130,35 @@
 
     
     <div class="post on-list">
+      <h1 class="post-title"><a href="/posts/shimming_d3d12_part2/">Shimming d3d12.dll for fun and profit, part 2</a></h1>
+      <div class="post-meta">
+        <span class="post-date">
+          26-05-2026
+        </span>
+        
+        
+          <span class="post-read-time">— 6 min read</span>
+        
+      </div>
+
+
+      
+
+      
+
+      <div class="post-content">
+        
+          
+            This post is a follow-up to Shimming d3d12.dll for fun and profit. If you haven&rsquo;t read it yet I would strongly recommend doing so, as this one builds directly on top of it. The companion article on how to actually use the tools is GPU profiling for WebGPU workloads on Windows with Chrome.
+What broke and why The short answer is Chrome. The long answer is also Chrome.
+At some point Chrome hardened its DLL loading policies and stopped loading our custom d3d12.
+          
+        
+      </div>
+      <div><a class="read-more button" href="/posts/shimming_d3d12_part2/">Read more →</a></div>
+    </div>
+    
+    <div class="post on-list">
       <h1 class="post-title"><a href="/posts/shimming_d3d12/">Shimming d3d12.dll for fun and profit</a></h1>
       <div class="post-meta">
         <span class="post-date">
@@ -149,8 +178,8 @@
       <div class="post-content">
         
           
-            ⚠ Deprecation notice (2026-05-26): The DLL shimming method described in this post no longer works, as Chrome has restricted custom DLL loading. A new approach using a launcher executable is now available — see the updated companion blog post for instructions.
- Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise.
+            ⚠ Deprecation notice (2026-05-26): The DLL shimming method described in this post no longer works, as Chrome has restricted custom DLL loading. A new approach using a launcher executable is now available, read about it in part 2, or jump straight to the updated usage instructions in the companion blog post.
+ Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome.
           
         
       </div>

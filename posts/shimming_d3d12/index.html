@@ -6,8 +6,8 @@
     
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<meta name="description" content="⚠ Deprecation notice (2026-05-26): The DLL shimming method described in this post no longer works, as Chrome has restricted custom DLL loading. A new approach using a launcher executable is now available — see the updated companion blog post for instructions.
- Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise."/>
+<meta name="description" content="⚠ Deprecation notice (2026-05-26): The DLL shimming method described in this post no longer works, as Chrome has restricted custom DLL loading. A new approach using a launcher executable is now available, read about it in part 2, or jump straight to the updated usage instructions in the companion blog post.
+ Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome."/>
 <meta name="keywords" content=""/>
 <meta name="robots" content="noodp"/>
 <link rel="canonical" href="/posts/shimming_d3d12/" />
@@ -28,14 +28,14 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Shimming d3d12.dll for fun and profit"/>
-<meta name="twitter:description" content="⚠ Deprecation notice (2026-05-26): The DLL shimming method described in this post no longer works, as Chrome has restricted custom DLL loading. A new approach using a launcher executable is now available — see the updated companion blog post for instructions.
- Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise."/>
+<meta name="twitter:description" content="⚠ Deprecation notice (2026-05-26): The DLL shimming method described in this post no longer works, as Chrome has restricted custom DLL loading. A new approach using a launcher executable is now available, read about it in part 2, or jump straight to the updated usage instructions in the companion blog post.
+ Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome."/>
 
 
 
 <meta property="og:title" content="Shimming d3d12.dll for fun and profit" />
-<meta property="og:description" content="⚠ Deprecation notice (2026-05-26): The DLL shimming method described in this post no longer works, as Chrome has restricted custom DLL loading. A new approach using a launcher executable is now available — see the updated companion blog post for instructions.
- Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise." />
+<meta property="og:description" content="⚠ Deprecation notice (2026-05-26): The DLL shimming method described in this post no longer works, as Chrome has restricted custom DLL loading. A new approach using a launcher executable is now available, read about it in part 2, or jump straight to the updated usage instructions in the companion blog post.
+ Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="/posts/shimming_d3d12/" />
 <meta property="article:published_time" content="2024-06-09T12:55:28+02:00" />
@@ -145,7 +145,7 @@
       
 
 <blockquote>
-<p><strong>⚠ Deprecation notice (2026-05-26):</strong> The DLL shimming method described in this post no longer works, as Chrome has restricted custom DLL loading. A new approach using a launcher executable is now available — see the updated <a href="https://frguthmann.github.io/posts/profiling_webgpu/" rel="noopener noreferrer">companion blog post</a> for instructions.</p>
+<p><strong>⚠ Deprecation notice (2026-05-26):</strong> The DLL shimming method described in this post no longer works, as Chrome has restricted custom DLL loading. A new approach using a launcher executable is now available, read about it in <a href="https://frguthmann.github.io/posts/shimming_d3d12_part2/" target="_blank" rel="noopener noreferrer">part 2</a>, or jump straight to the updated usage instructions in the <a href="https://frguthmann.github.io/posts/profiling_webgpu/" target="_blank" rel="noopener noreferrer">companion blog post</a>.</p>
 </blockquote>
 
 <h1 id="why-would-anyone-do-this">Why would anyone do this?</h1>
@@ -484,6 +484,8 @@ private:
 
 <p>Thanks a lot for reading thus far, please leave a comment if you have questions or anything to say. I&rsquo;m eager to know what your thoughts are on this nice little hack 😁.</p>
 
+<p><em>Update (2026-05-26): Chrome eventually restricted custom DLL loading and this approach stopped working. If you&rsquo;re curious about how the problem was solved without touching Chrome&rsquo;s installation folder, check out <a href="https://frguthmann.github.io/posts/shimming_d3d12_part2/" target="_blank" rel="noopener noreferrer">part 2</a>.</em></p>
+
     </div>
     
       <div class="pagination">
@@ -492,6 +494,13 @@ private:
           <hr />
         </div>
         <div class="pagination__buttons">
+          
+            <span class="button previous">
+              <a href="/posts/shimming_d3d12_part2/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Shimming d3d12.dll for fun and profit, part 2</span>
+              </a>
+            </span>
           
           
             <span class="button next">

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>Shimming d3d12.dll for fun and profit, part 2 :: The GutHub — My humble blog</title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="description" content="This post is a follow-up to Shimming d3d12.dll for fun and profit. If you haven&amp;rsquo;t read it yet I would strongly recommend doing so, as this one builds directly on top of it. The companion article on how to actually use the tools is GPU profiling for WebGPU workloads on Windows with Chrome.
+What broke and why The short answer is Chrome. The long answer is also Chrome.
+At some point Chrome hardened its DLL loading policies and stopped loading our custom d3d12."/>
+<meta name="keywords" content=""/>
+<meta name="robots" content="noodp"/>
+<link rel="canonical" href="/posts/shimming_d3d12_part2/" />
+
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css">
+
+
+<link rel="stylesheet" href="/style.css">
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
+<link rel="shortcut icon" href="/img/favicon.png">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Shimming d3d12.dll for fun and profit, part 2"/>
+<meta name="twitter:description" content="This post is a follow-up to Shimming d3d12.dll for fun and profit. If you haven&rsquo;t read it yet I would strongly recommend doing so, as this one builds directly on top of it. The companion article on how to actually use the tools is GPU profiling for WebGPU workloads on Windows with Chrome.
+What broke and why The short answer is Chrome. The long answer is also Chrome.
+At some point Chrome hardened its DLL loading policies and stopped loading our custom d3d12."/>
+
+
+
+<meta property="og:title" content="Shimming d3d12.dll for fun and profit, part 2" />
+<meta property="og:description" content="This post is a follow-up to Shimming d3d12.dll for fun and profit. If you haven&rsquo;t read it yet I would strongly recommend doing so, as this one builds directly on top of it. The companion article on how to actually use the tools is GPU profiling for WebGPU workloads on Windows with Chrome.
+What broke and why The short answer is Chrome. The long answer is also Chrome.
+At some point Chrome hardened its DLL loading policies and stopped loading our custom d3d12." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/shimming_d3d12_part2/" />
+<meta property="article:published_time" content="2026-05-26T00:00:00+02:00" />
+<meta property="article:modified_time" content="2026-05-26T00:00:00+02:00" /><meta property="og:site_name" content="The GutHub" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">The GutHub</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <span class="header__right" style="margin-left: 0.5rem;">
+      <a href="https://twitter.com/frguthmann" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+</a>
+      <a href="https://github.com/frguthmann" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="currentColor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+</a>
+      <a href="https://www.linkedin.com/in/frguthmann/" target="_blank" class="socials" style="margin-right: 0.5rem;" ><svg class="theme-toggler" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></svg>
+</a>
+    </span>
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/archive">Posts</a></li>
+        
+      
+        
+          <li><a href="/projects">Projects</a></li>
+        
+      
+      
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/archive">Posts</a></li>
+      
+    
+      
+        <li><a href="/projects">Projects</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  <div class="post">
+    <h2 class="post-title"><a href="/posts/shimming_d3d12_part2/">Shimming d3d12.dll for fun and profit, part 2</a></h2>
+    <div class="post-meta">
+      
+        <span class="post-date">
+            26-05-2026
+        </span>
+      
+      
+      
+        <span class="post-read-time">— 6 min read</span>
+      
+    </div>
+
+    
+
+    
+
+    <div class="post-content">
+      
+
+<p>This post is a follow-up to <a href="https://frguthmann.github.io/posts/shimming_d3d12/" target="_blank" rel="noopener noreferrer">Shimming d3d12.dll for fun and profit</a>. If you haven&rsquo;t read it yet I would strongly recommend doing so, as this one builds directly on top of it. The companion article on how to actually use the tools is <a href="https://frguthmann.github.io/posts/profiling_webgpu/" target="_blank" rel="noopener noreferrer">GPU profiling for WebGPU workloads on Windows with Chrome</a>.</p>
+
+<h1 id="what-broke-and-why">What broke and why</h1>
+
+<p>The short answer is Chrome. The long answer is also Chrome.</p>
+
+<p>At some point Chrome hardened its DLL loading policies and stopped loading our custom <code>d3d12.dll</code> even when launched with <code>--disable-gpu-sandbox --disable-gpu-watchdog</code>. The original trick relied on Windows&rsquo; DLL search order: place our <code>d3d12.dll</code> next to <code>chrome.exe</code> and Windows would pick it up before the one in System32. Chrome decided it didn&rsquo;t want that anymore, which is honestly fair enough from a security standpoint. It just means we need a different plan.</p>
+
+<p>The goal is the same as before: intercept <code>D3D12CreateDevice</code>, wrap the device, catch <code>ID3D12SharingContract::Present</code> and call an actual swapchain present to trigger the profiler. We just need to get our code into Chrome&rsquo;s process without relying on the DLL search order.</p>
+
+<h1 id="the-new-plan">The new plan</h1>
+
+<p>The solution has two parts.</p>
+
+<p>First, a <strong>launcher executable</strong> (<code>webgpu_profiling_launcher.exe</code>) that creates Chrome in a suspended state, injects our hook DLL into the process, and then resumes it. Chrome wakes up with our code already loaded, none the wiser.</p>
+
+<p>Second, a <strong>hook DLL</strong> (<code>d3d12_webgpu_hook.dll</code>) that, instead of replacing <code>d3d12.dll</code> entirely, uses <a href="https://github.com/microsoft/Detours" target="_blank" rel="noopener noreferrer">Microsoft Detours</a> to patch <code>D3D12CreateDevice</code>&rsquo;s function pointer in-memory at runtime. Same interception, different delivery mechanism. The wrapper classes from part 1 are reused wholesale, all that work wasn&rsquo;t for nothing!</p>
+
+<p>There&rsquo;s actually a third problem hiding in here that I&rsquo;ll get to later, but let&rsquo;s start with the injection.</p>
+
+<h1 id="injecting-the-dll">Injecting the DLL</h1>
+
+<p>The classic way to inject a DLL into a process is <code>CreateRemoteThread</code> + <code>LoadLibrary</code>. The idea is straightforward: <code>LoadLibraryA</code> is a regular function in <code>kernel32.dll</code>, and <code>CreateRemoteThread</code> lets you start a thread in another process at an arbitrary address. Since <code>kernel32.dll</code> is loaded at the same address in every process (a Windows guarantee), we can grab <code>LoadLibraryA</code>&rsquo;s address in our own process, use it as the thread entry point in the target process, and pass the DLL path as the thread argument. The remote thread calls <code>LoadLibrary</code> on our DLL as if it were the target process itself doing it.</p>
+
+<pre><code class="language-cpp">FARPROC loadLibAddr = GetProcAddress(GetModuleHandleA(&quot;kernel32.dll&quot;), &quot;LoadLibraryA&quot;);
+
+HANDLE thread = CreateRemoteThread(process, NULL, 0,
+    (LPTHREAD_START_ROUTINE)loadLibAddr, remoteMem, 0, NULL);
+</code></pre>
+
+<p>Before that we of course need to write the DLL path string into the target process&rsquo;s address space, <code>remoteMem</code>, using <code>VirtualAllocEx</code> and <code>WriteProcessMemory</code>, since the string lives in <em>our</em> process memory and the remote thread can&rsquo;t read it from there. We then wait for the remote thread to finish with <code>WaitForSingleObject</code> before moving on.</p>
+
+<p>The launcher does all of this on a Chrome process it created with <code>CREATE_SUSPENDED</code>. Chrome is frozen at its very first instruction, we inject, and then we call <code>ResumeThread</code> to let it run. Our hook is active before Chrome has had a chance to do anything.</p>
+
+<pre><code class="language-cpp">BOOL created = CreateProcessA(
+    chromePath.c_str(), (LPSTR)cmdLine.c_str(),
+    NULL, NULL, FALSE,
+    CREATE_SUSPENDED,   // &lt;-- freeze Chrome before it starts
+    NULL, NULL, &amp;si, &amp;pi);
+
+InjectDllIntoProcess(pi.hProcess, hookDll.c_str(), true);
+
+ResumeThread(pi.hThread);
+</code></pre>
+
+<h1 id="hooking-with-detours">Hooking with Detours</h1>
+
+<p>Now that our DLL is loaded into Chrome&rsquo;s process, we can patch <code>D3D12CreateDevice</code>. Microsoft Detours makes this almost embarrassingly easy. You give it the real function pointer and your hook function, and it rewrites the first few bytes of the real function with a jump to yours, saving the original bytes in a trampoline so you can still call through.</p>
+
+<pre><code class="language-cpp">static PFN_D3D12_CREATE_DEVICE Real_D3D12CreateDevice = nullptr;
+
+static HRESULT WINAPI Hook_D3D12CreateDevice(
+    IUnknown* pAdapter,
+    D3D_FEATURE_LEVEL MinimumFeatureLevel,
+    REFIID riid,
+    void** ppDevice)
+{
+    HRESULT res = Real_D3D12CreateDevice(pAdapter, MinimumFeatureLevel, riid, ppDevice);
+    if (res == S_OK &amp;&amp; ppDevice &amp;&amp; *ppDevice)
+    {
+        ID3D12Device_webgpu_shim* device = new ID3D12Device_webgpu_shim(reinterpret_cast&lt;IUnknown*&gt;(*ppDevice));
+        *ppDevice = device;
+    }
+    return res;
+}
+</code></pre>
+
+<p>Installing and removing the hook is wrapped in a Detours transaction, which handles the thread-safe patching:</p>
+
+<pre><code class="language-cpp">static LONG AttachHooks()
+{
+    DetourTransactionBegin();
+    DetourUpdateThread(GetCurrentThread());
+    DetourAttach(&amp;(PVOID&amp;)Real_D3D12CreateDevice, Hook_D3D12CreateDevice);
+    return DetourTransactionCommit();
+}
+</code></pre>
+
+<p>Once <code>D3D12CreateDevice</code> is hooked, the rest of the logic is identical to part 1. We wrap the returned device, intercept command queue creation to get at <code>ID3D12SharingContract</code>, and call <code>swapChain_-&gt;Present(0, 0)</code> from there. The profiler sees a present, catches the frame boundary, and the capture completes.</p>
+
+<p>One small thing worth noting: in <code>DllMain</code> we call <code>DetourRestoreAfterWith()</code> before attaching the hooks. This is a Detours formality required when a DLL was loaded via <code>DetourCreateProcessWithDll</code> or injection, it restores the import address table to a clean state before we start patching. Skipping it causes undefined behaviour. I skipped it the first time and spent a while confused about why things were crashing. Don&rsquo;t be me.</p>
+
+<pre><code class="language-cpp">case DLL_PROCESS_ATTACH:
+    DetourRestoreAfterWith();
+    DisableThreadLibraryCalls(hinstDLL);
+    GetModuleFileNameA(hinstDLL, g_hookDllPath, MAX_PATH);
+    AttachHooks();
+    break;
+</code></pre>
+
+<h1 id="the-gpu-child-process-problem">The GPU child process problem</h1>
+
+<p>Here is the part I hinted at earlier. Chrome is not a single process. It has a main browser process and a separate GPU process (<code>--type=gpu</code>) that is actually responsible for the Direct3D work. When we inject into the main Chrome process and patch <code>D3D12CreateDevice</code>, we are patching it in the <em>wrong process</em>. The GPU process is spawned after Chrome starts and doesn&rsquo;t inherit our hook.</p>
+
+<p>The fix is to also hook <code>CreateProcessW</code> in the main Chrome process. Every time Chrome spawns a child process, our hook runs first. We inspect the command line and if we see <code>--type=gpu</code>, we know this is the GPU process. We force <code>CREATE_SUSPENDED</code>, inject ourselves into it the same way the launcher injected us into Chrome, and then resume it.</p>
+
+<pre><code class="language-cpp">static BOOL WINAPI Hook_CreateProcessW(
+    LPCWSTR lpApplicationName, LPWSTR lpCommandLine, ...)
+{
+    bool isGpuProcess = wcsstr(lpCommandLine, L&quot;--type=gpu&quot;) != nullptr;
+
+    DWORD flags = dwCreationFlags;
+    if (isGpuProcess) flags |= CREATE_SUSPENDED;
+
+    BOOL result = Real_CreateProcessW(lpApplicationName, lpCommandLine, ..., flags, ...);
+
+    if (result &amp;&amp; isGpuProcess)
+    {
+        InjectDllIntoProcess(lpProcessInformation-&gt;hProcess, g_hookDllPath, false);
+
+        if (!(dwCreationFlags &amp; CREATE_SUSPENDED))
+            ResumeThread(lpProcessInformation-&gt;hThread);
+    }
+
+    return result;
+}
+</code></pre>
+
+<p>To know which DLL to inject, we store our own path at load time using <code>GetModuleFileNameA(hinstDLL, g_hookDllPath, MAX_PATH)</code> in <code>DllMain</code>. The hook DLL injects itself.</p>
+
+<p>This propagation step is why Detours tries to hook <code>D3D12CreateDevice</code> gracefully even when <code>d3d12.dll</code> isn&rsquo;t loaded yet. In the main Chrome process, <code>d3d12.dll</code> probably isn&rsquo;t loaded at all, that&rsquo;s fine, the hook just skips it. In the GPU process, <code>d3d12.dll</code> will be there and the hook lands properly.</p>
+
+<h1 id="closing-thoughts">Closing thoughts</h1>
+
+<p>Honestly the new approach feels more practical than the old one, even if it involves more moving parts. We&rsquo;re no longer touching Chrome&rsquo;s installation directory at all, which is less footgun-y. Detours is a proper library designed for exactly this use case, compared to rolling a full DLL replacement by hand. The wrapper classes from part 1 are unchanged, that code is doing the same job it always did, just getting delivered differently.</p>
+
+<p>That said, it is still a massive hack. Whether Chrome will keep spawning its GPU process with <code>--type=gpu</code> in the command line forever, I have absolutely no idea. It could change any day. Enjoy it while it works!</p>
+
+<p>If you&rsquo;d like to see this kind of profiler support available natively in Chrome without any of this, please upvote <a href="https://issues.chromium.org/issues/506165683" target="_blank" rel="noopener noreferrer">this Chromium issue</a>.</p>
+
+    </div>
+    
+      <div class="pagination">
+        <div class="pagination__title">
+          <span class="pagination__title-h">Read other posts</span>
+          <hr />
+        </div>
+        <div class="pagination__buttons">
+          
+          
+            <span class="button next">
+              <a href="/posts/shimming_d3d12/">
+                <span class="button__text">Shimming d3d12.dll for fun and profit</span>
+                <span class="button__icon">→</span>
+              </a>
+            </span>
+          
+        </div>
+      </div>
+    
+
+    <script src="https://giscus.app/client.js"
+            data-repo="frguthmann/frguthmann.github.io"
+            data-repo-id="MDEwOlJlcG9zaXRvcnkyMDE5NzAxMjI="
+            data-category="General"
+            data-category-id="DIC_kwDODAnRys4Cje9g"
+            data-mapping="pathname"
+            data-strict="0"
+            data-reactions-enabled="1"
+            data-emit-metadata="0"
+            data-input-position="top"
+            data-theme="preferred_color_scheme"
+            data-lang="en"
+            data-loading="lazy"
+            crossorigin="anonymous"
+            async>
+        </script>
+    </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">François Guthmann</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+      <div class="copyright">
+        <span>© 2026 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+        <span>Theme created by <a href="https://twitter.com/panr" target="_blank" rel="noopener">panr</a></span>
+      </div>
+    
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-105041515-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+  </body>
+</html>
