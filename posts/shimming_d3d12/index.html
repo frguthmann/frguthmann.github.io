@@ -6,7 +6,8 @@
     
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<meta name="description" content="Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise. However, when it comes to profiling, well the situation is not that great. For instance, AMD&amp;rsquo;s Radeon Developer Panel will detect Chrome as a DX12 app (when using the proper flags), it will attach to the process and even let me start a capture."/>
+<meta name="description" content="⚠ Deprecation notice (2026-05-26): The DLL shimming method described in this post no longer works, as Chrome has restricted custom DLL loading. A new approach using a launcher executable is now available — see the updated companion blog post for instructions.
+ Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise."/>
 <meta name="keywords" content=""/>
 <meta name="robots" content="noodp"/>
 <link rel="canonical" href="/posts/shimming_d3d12/" />
@@ -27,12 +28,14 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Shimming d3d12.dll for fun and profit"/>
-<meta name="twitter:description" content="Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise. However, when it comes to profiling, well the situation is not that great. For instance, AMD&rsquo;s Radeon Developer Panel will detect Chrome as a DX12 app (when using the proper flags), it will attach to the process and even let me start a capture."/>
+<meta name="twitter:description" content="⚠ Deprecation notice (2026-05-26): The DLL shimming method described in this post no longer works, as Chrome has restricted custom DLL loading. A new approach using a launcher executable is now available — see the updated companion blog post for instructions.
+ Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise."/>
 
 
 
 <meta property="og:title" content="Shimming d3d12.dll for fun and profit" />
-<meta property="og:description" content="Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise. However, when it comes to profiling, well the situation is not that great. For instance, AMD&rsquo;s Radeon Developer Panel will detect Chrome as a DX12 app (when using the proper flags), it will attach to the process and even let me start a capture." />
+<meta property="og:description" content="⚠ Deprecation notice (2026-05-26): The DLL shimming method described in this post no longer works, as Chrome has restricted custom DLL loading. A new approach using a launcher executable is now available — see the updated companion blog post for instructions.
+ Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="/posts/shimming_d3d12/" />
 <meta property="article:published_time" content="2024-06-09T12:55:28+02:00" />
@@ -140,6 +143,10 @@
 
     <div class="post-content">
       
+
+<blockquote>
+<p><strong>⚠ Deprecation notice (2026-05-26):</strong> The DLL shimming method described in this post no longer works, as Chrome has restricted custom DLL loading. A new approach using a launcher executable is now available — see the updated <a href="https://frguthmann.github.io/posts/profiling_webgpu/" rel="noopener noreferrer">companion blog post</a> for instructions.</p>
+</blockquote>
 
 <h1 id="why-would-anyone-do-this">Why would anyone do this?</h1>
 
@@ -534,7 +541,7 @@ private:
 </a>
 
       <div class="copyright">
-        <span>© 2024 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+        <span>© 2026 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
         <span>Theme created by <a href="https://twitter.com/panr" target="_blank" rel="noopener">panr</a></span>
       </div>
     

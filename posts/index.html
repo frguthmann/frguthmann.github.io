@@ -149,7 +149,8 @@
       <div class="post-content">
         
           
-            Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise. However, when it comes to profiling, well the situation is not that great. For instance, AMD&rsquo;s Radeon Developer Panel will detect Chrome as a DX12 app (when using the proper flags), it will attach to the process and even let me start a capture.
+            ⚠ Deprecation notice (2026-05-26): The DLL shimming method described in this post no longer works, as Chrome has restricted custom DLL loading. A new approach using a launcher executable is now available — see the updated companion blog post for instructions.
+ Why would anyone do this? I have been playing around with WebGPU recently, writing a toy engine in JS and running it on Chrome. The debugging situation is great now, PIX just works and I can usually identify and fix issues quickly when they arise.
           
         
       </div>
@@ -176,8 +177,8 @@
       <div class="post-content">
         
           
-            Fast Forward If you&rsquo;ve read the article already and/or want to jump straight to profiling, go to the TL;DR section.
-Context WebGPU is not a native graphics API, as in no hardware vendor provides specific drivers for their GPUs targeting this API. Instead, WebGPU runtimes like web browsers must implement backends for WebGPU using modern native APIs such as DirectX12, Vulkan or Metal. Those APIs are widely used, in particular for video games, and hardware vendors have developed great profiling tools for them.
+            Update (2026-05-26): The d3d12_webgpu_shim repository has been updated. The old method of placing d3d12.dll directly in Chrome&rsquo;s application folder is now deprecated, as Chrome has restricted custom DLL loading. The recommended approach now uses a launcher executable (webgpu_profiling_launcher.exe) that injects the hook DLL at runtime. The instructions below have been updated accordingly.
+ Fast Forward If you’d like to see native GPU profiler support in Chrome, consider upvoting the following Chromium issue.
           
         
       </div>
@@ -266,7 +267,7 @@ This will not be a tutorial on how to setup compute shaders.
 </a>
 
       <div class="copyright">
-        <span>© 2024 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+        <span>© 2026 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
         <span>Theme created by <a href="https://twitter.com/panr" target="_blank" rel="noopener">panr</a></span>
       </div>
     
