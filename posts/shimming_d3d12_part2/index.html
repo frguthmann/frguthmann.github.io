@@ -136,7 +136,7 @@ At some point Chrome hardened its DLL loading policies and stopped loading our c
       
       
       
-        <span class="post-read-time">— 6 min read</span>
+        <span class="post-read-time">— 8 min read</span>
       
     </div>
 
@@ -268,6 +268,22 @@ static HRESULT WINAPI Hook_D3D12CreateDevice(
 <p>To know which DLL to inject, we store our own path at load time using <code>GetModuleFileNameA(hinstDLL, g_hookDllPath, MAX_PATH)</code> in <code>DllMain</code>. The hook DLL injects itself.</p>
 
 <p>This propagation step is why Detours tries to hook <code>D3D12CreateDevice</code> gracefully even when <code>d3d12.dll</code> isn&rsquo;t loaded yet. In the main Chrome process, <code>d3d12.dll</code> probably isn&rsquo;t loaded at all, that&rsquo;s fine, the hook just skips it. In the GPU process, <code>d3d12.dll</code> will be there and the hook lands properly.</p>
+
+<h1 id="the-nsight-problem">The Nsight problem</h1>
+
+<p>There is one more wrinkle I haven&rsquo;t mentioned yet. I actually released this blog post and the code before dealing with it, oops. I got lazy, didn&rsquo;t test Nsight and forgot it had to launch the process itself. For some reason, launching the launcher for Nsight doesn&rsquo;t work well and so I had to come up with another solution.</p>
+
+<p>First of all, while investigating I realized that Nsight wouldn&rsquo;t attach to Chrome anymore. It used to attach fine, the issue was that it couldn&rsquo;t capture properly. So I started Googling the issue and found a thread which actually figured out the issue. (Funnily enough, this thread mentions my blog so <a href="https://forums.developer.nvidia.com/t/nsight-graphics-failed-to-capture-for-chrome/349288" target="_blank" rel="noopener noreferrer">I&rsquo;ll close the loop</a>) Nsight needs to run as administrator to be able to do a GPU trace. And when Chrome is launched by an elevated process, it notices and <strong>de-elevates itself</strong>: it spawns a new non-elevated Chrome process and the original one exits.</p>
+
+<p>This is likely a Chrome security feature meant to prevent accidentally running the browser with admin rights. Reasonable! But it means Nsight loses track of the process it just started. The fix is one flag: <code>--do-not-de-elevate</code>. Passing it to Chrome suppresses the de-elevation step entirely. Chrome stays at the same privilege level as Nsight and it is able to keep the connection to the correct process.</p>
+
+<p>Good, we&rsquo;ve solved one problem. However, launching the launcher from Nsight with the added flag still doesn&rsquo;t work. My best guess is that if Nsight isn&rsquo;t the one creating Chrome&rsquo;s process, it won&rsquo;t attach to it. Fine, we&rsquo;ll inject ourselves after the fact then.</p>
+
+<p>The implementation is straightforward. Given a process name like <code>chrome.exe</code>, it uses <code>CreateToolhelp32Snapshot</code> to walk the list of running processes and collect every matching PID. It then calls <code>OpenProcess</code> on each one and runs the same <code>InjectDllIntoProcess</code> function the launcher uses, <code>VirtualAllocEx</code>, <code>WriteProcessMemory</code>, <code>CreateRemoteThread</code> on <code>LoadLibraryA</code>, wait for it to finish. Same mechanism, just pointed at a process we didn&rsquo;t create ourselves.</p>
+
+<p>One thing worth noting: since <code>OpenProcess</code> with the flags required for remote thread injection is a privileged operation, the injector is compiled with a <code>requireAdministrator</code> UAC manifest. It will always prompt for elevation.</p>
+
+<p>One last thing, injecting into the main Chrome process gets the <code>CreateProcessW</code> hook in place, but if the tab with the WebGPU workload was already opened, the GPU child process was already spawned before we arrived. Reloading the tab kills and recreates the GPU process, which our hook then intercepts and injects into automatically.</p>
 
 <h1 id="closing-thoughts">Closing thoughts</h1>
 
