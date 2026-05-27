@@ -133,7 +133,7 @@
       
       
       
-        <span class="post-read-time">— 8 min read</span>
+        <span class="post-read-time">— 9 min read</span>
       
     </div>
 
@@ -195,6 +195,7 @@ cmake --build build --config RelWithDebInfo
 <li><code>--enable-dawn-features=emit_hlsl_debug_symbols,disable_symbol_renaming</code></li>
 <li><code>--no-sandbox</code></li>
 <li><code>--disable-direct-composition</code></li>
+<li><code>--do-not-de-elevate</code></li>
 </ol>
 
 <p>The first arguments are the minimum required to capture a frame. The second ones are convenience arguments that let you inspect shader source with the original variable names. The third one is required by Nvidia Nsight to function properly, I have no idea why. The last argument used to be required to capture Chrome with PIX so I keep it around just in case.</p>
@@ -220,10 +221,29 @@ cmake --build build --config RelWithDebInfo
 
 <p>When the Radeon Developer Panel is open, connected and has the <code>Profiling</code> feature selected, any DirectX12, Vulkan, OpenCL or HIP application that you launch from now on will be automatically detected and attached to. This means we are now ready to launch Chrome.</p>
 
-<p>Since RDP doesn&rsquo;t need to launch the app for you, feel free to open your favorite terminal and launch Chrome via the launcher using the previously mentioned CLI arguments. The overall command line should look something like this:<br />
-<code>webgpu_profiling_launcher.exe &quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot; --no-sandbox --disable-gpu-sandbox --disable-gpu-watchdog --disable-direct-composition --enable-dawn-features=emit_hlsl_debug_symbols,disable_symbol_renaming</code></p>
+<p>Since RDP doesn&rsquo;t need to launch the app itself, you have two options here.</p>
 
-<p>Now open a WebGPU app in a tab and if everything is working properly you should see RDP&rsquo;s <code>Profiling</code> tab change from <code>Status: Offline</code> to <code>Status: Ready</code>.</p>
+<p><strong>Option A: Launcher (start Chrome with the hook already active)</strong></p>
+
+<ol>
+<li><strong>Launch RDP</strong> and make sure it&rsquo;s connected and in <code>Profiling</code> mode.</li>
+<li><strong>Launch Chrome via the launcher</strong> with the profiling flags:<br />
+<code>webgpu_profiling_launcher.exe &quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot; --no-sandbox --disable-gpu-sandbox --disable-gpu-watchdog --disable-direct-composition --enable-dawn-features=emit_hlsl_debug_symbols,disable_symbol_renaming</code></li>
+<li><strong>Open your WebGPU app</strong> in a tab. No reload needed, the hook is active from the start.</li>
+</ol>
+
+<p><strong>Option B: Injector (attach to a running Chrome)</strong></p>
+
+<ol>
+<li><strong>Launch RDP</strong> and make sure it&rsquo;s connected and in <code>Profiling</code> mode.</li>
+<li><strong>Launch Chrome</strong> with the profiling flags:<br />
+<code>&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot; --no-sandbox --disable-gpu-sandbox --disable-gpu-watchdog --disable-direct-composition --enable-dawn-features=emit_hlsl_debug_symbols,disable_symbol_renaming</code></li>
+<li><strong>Inject</strong> the hook into the running Chrome process. Run the following from the folder containing <code>d3d12_webgpu_hook.dll</code>:<br />
+<code>webgpu_injector.exe chrome.exe</code></li>
+<li><strong>Reload the WebGPU tab.</strong> This is required because the hook&rsquo;s <code>CreateProcessW</code> detour only catches GPU child processes spawned <em>after</em> injection. Reloading forces Chrome to re-create the GPU process with the hook already active.</li>
+</ol>
+
+<p>Once the tab is open you should see RDP&rsquo;s <code>Profiling</code> tab change from <code>Status: Offline</code> to <code>Status: Ready</code>.</p>
 
 <p><a href="/images/profiling_webgpu/rdp_ready.png" target="_blank" rel="noopener noreferrer">
   <img src="/images/profiling_webgpu/rdp_ready.png"  alt="An image showing what the profiling tab of RDP should look like when connected."  class="center"  style="border-radius: 8px;"  />
@@ -262,9 +282,13 @@ cmake --build build --config RelWithDebInfo
 
 </a></p>
 
-<p>Select <code>webgpu_profiling_launcher.exe</code> in the <code>Application Executable</code> field. Don&rsquo;t forget to fill the <code>Command Line Arguments</code> field with the path to Chrome followed by the relevant arguments, including the required <code>--no-sandbox</code>. The field should look something like <code>&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot; --no-sandbox --disable-gpu-sandbox --disable-gpu-watchdog --disable-direct-composition --enable-dawn-features=emit_hlsl_debug_symbols,disable_symbol_renaming</code>.</p>
+<p>Select your Chrome executable in the <code>Application Executable</code> field, the path should look something like <code>C:\Program Files\Google\Chrome\Application\chrome.exe</code>. Don&rsquo;t forget to fill the <code>Command Line Arguments</code> field with the relevant arguments. Note the addition of <code>--do-not-de-elevate</code>: Nsight runs as administrator, and without this flag Chrome will de-elevate itself on launch, which breaks injection. The field should look something like:<br />
+<code>--no-sandbox --disable-gpu-sandbox --disable-gpu-watchdog --disable-direct-composition --enable-dawn-features=emit_hlsl_debug_symbols,disable_symbol_renaming --do-not-de-elevate</code></p>
 
-<p>Once those fields are filled, just hit the <code>Launch GPU Trace</code> button in the bottom right corner and watch Chrome start. Open a tab with a WebGPU workload to make Nsight connect automatically. If the operation succeeded the app&rsquo;s layout should change and a new <code>Collect GPU Trace</code> button should appear.</p>
+<p>Once those fields are filled, hit the <code>Launch GPU Trace</code> button in the bottom right corner and watch Chrome start. Then, <strong>inject the hook</strong> into the running Chrome process. Run the following from the folder containing <code>d3d12_webgpu_hook.dll</code>:<br />
+<code>webgpu_injector.exe chrome.exe</code></p>
+
+<p>Now open a tab with a WebGPU workload and reload it so the hook&rsquo;s <code>CreateProcessW</code> detour can catch the GPU child process. Nsight should connect automatically and a new <code>Collect GPU Trace</code> button should appear.</p>
 
 <p><a href="/images/profiling_webgpu/nsight_capture_button.png" target="_blank" rel="noopener noreferrer">
   <img src="/images/profiling_webgpu/nsight_capture_button.png"  alt="An image showing where the capture button is in the Nsight interface"  class="center"  style="border-radius: 8px;"  />
@@ -308,21 +332,40 @@ cmake --build build --config RelWithDebInfo
 <p>⚠ <strong>Before anything else, please remember that this is a hacky solution and that you should not browse the open web with these tools attached. They should only be used for a GPU profiling session.</strong></p>
 </blockquote>
 
-<h2 id="instructions">Instructions</h2>
+<h2 id="launcher-workflow-amd-rdp">Launcher workflow (AMD RDP)</h2>
 
 <ol>
 <li>Download <code>webgpu_profiling_launcher.exe</code> and <code>d3d12_webgpu_hook.dll</code> from the release section of <a href="https://github.com/frguthmann/d3d12_webgpu_shim" target="_blank" rel="noopener noreferrer">this repository</a>.</li>
+<li>Download <code>WinPixEventRuntime.dll</code> from the release section of <a href="https://github.com/frguthmann/PixEventsAMD" target="_blank" rel="noopener noreferrer">that repository</a>.
+
+<ul>
+<li>Place it into the <code>\Google\Chrome\Application\&lt;Version Number&gt;</code> folder.</li>
+</ul></li>
+<li>When launching Chrome, use the launcher with the following command line arguments:
+
+<ul>
+<li><code>webgpu_profiling_launcher.exe &quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot; --no-sandbox --disable-gpu-sandbox --disable-gpu-watchdog --disable-direct-composition --enable-dawn-features=emit_hlsl_debug_symbols,disable_symbol_renaming</code></li>
+</ul></li>
+<li>Use the GPU profiler as usual.</li>
+</ol>
+
+<h2 id="injector-workflow-amd-rdp-and-nvidia-nsight">Injector workflow (AMD RDP and Nvidia Nsight)</h2>
+
+<ol>
+<li>Download <code>webgpu_injector.exe</code> and <code>d3d12_webgpu_hook.dll</code> from the release section of <a href="https://github.com/frguthmann/d3d12_webgpu_shim" target="_blank" rel="noopener noreferrer">this repository</a>.</li>
 <li>On AMD, download <code>WinPixEventRuntime.dll</code> from the release section of <a href="https://github.com/frguthmann/PixEventsAMD" target="_blank" rel="noopener noreferrer">that repository</a>.
 
 <ul>
 <li>Place it into the <code>\Google\Chrome\Application\&lt;Version Number&gt;</code> folder.</li>
 </ul></li>
-<li>Instead of launching Chrome directly, use the launcher with your Chrome path and profiling flags:
+<li>Launch Chrome (or have Nsight launch it). Include <code>--do-not-de-elevate</code> in the flags when using Nsight:
 
 <ul>
-<li><code>webgpu_profiling_launcher.exe &quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot; --no-sandbox --disable-gpu-sandbox --disable-gpu-watchdog --disable-direct-composition --enable-dawn-features=emit_hlsl_debug_symbols,disable_symbol_renaming</code></li>
+<li><code>--no-sandbox --disable-gpu-sandbox --disable-gpu-watchdog --disable-direct-composition --enable-dawn-features=emit_hlsl_debug_symbols,disable_symbol_renaming --do-not-de-elevate</code></li>
 </ul></li>
-<li>Use your favorite GPU profiler as usual.<br /></li>
+<li>Run <code>webgpu_injector.exe chrome.exe</code> from the folder containing <code>d3d12_webgpu_hook.dll</code>.</li>
+<li>Reload the WebGPU tab.</li>
+<li>Use your favorite GPU profiler as usual.</li>
 </ol>
 
     </div>
